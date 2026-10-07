@@ -1,5 +1,5 @@
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
-import { validateMember } from '../src/shared.js';
+import { validateMember, validateComment } from '../src/shared.js';
 
 const ENV = ['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','ADMIN_USER','ADMIN_PASSWORD','SESSION_SECRET'];
 function configuration() {
@@ -67,12 +67,31 @@ export default async function handler(req,res) {
     if(action==='logout'){requireMethod(req,['POST']);res.setHeader('Set-Cookie',cookie(req,'',0));return res.status(200).json({ok:true});}
     if(action==='lookup'){
       requireMethod(req,['POST']);await budget(req,'lookup',30);
-      if(!validId(body.id)||typeof body.code!=='string'||!/^[A-Z0-9]{6,64}$/i.test(body.code))return res.status(400).json({error:'Revisa tu número y código de acceso.'});
-      const result=await db(`iron_members?id=eq.${Number(body.id)}&access_code=eq.${encodeURIComponent(body.code.toUpperCase())}&select=id,name,area,start,months&limit=1`);
-      if(!result?.length)return res.status(404).json({error:'No encontramos una membresía con esos datos. Verifica tu número y código en recepción.'});
+      if(typeof body.name !== 'string' || body.name.trim().length < 3 || body.name.length > 100)return res.status(400).json({error:'Escribe tu nombre completo.'});
+      const result=await db('rpc/iron_lookup_name',{method:'POST',body:{p_name:body.name.trim()}});
+      if(!result?.length)return res.status(404).json({error:'No encontramos tu membresía. Escribe tu nombre completo como lo registraste en recepción.'});
+      if(result.length>1)return res.status(409).json({error:'Hay más de un registro con ese nombre. Acércate a recepción para identificar tu membresía.'});
       return res.status(200).json(result[0]);
     }
+    if(action==='comments' && req.method==='POST') {
+      await budget(req,'comments',5);
+      let fields;try { fields=validateComment(body); } catch(e) { return res.status(400).json({error:e.message}); }
+      await db('iron_comments',{method:'POST',body:fields});
+      return res.status(201).json({ok:true});
+    }
     if(!authenticated(req))return res.status(401).json({error:'Inicia sesión para administrar los socios.'});
+    if(action==='comments') {
+      requireMethod(req,['GET','PATCH']);
+      if(req.method==='GET') {
+        let rows=[],offset=0;
+        while(true){const page=await db(`iron_comments?select=*&order=created_at.desc&limit=500&offset=${offset}`);rows.push(...page);if(page.length<500)break;offset+=500;}
+        return res.status(200).json(rows);
+      }
+      if(!validId(body.id))return res.status(400).json({error:'Comentario inválido.'});
+      const result=await db('iron_comments?id=eq.'+Number(body.id),{method:'PATCH',body:{reviewed:true}});
+      if(!result?.length)return res.status(404).json({error:'No encontramos el comentario.'});
+      return res.status(200).json({ok:true});
+    }
     if(action!=='members')return res.status(404).json({error:'Ruta no encontrada.'});
     requireMethod(req,['GET','POST','PATCH','DELETE']);
     if(req.method==='GET'){

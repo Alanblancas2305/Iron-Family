@@ -22,3 +22,17 @@ export function validateMember(m) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(m.start) || !Number.isFinite(Date.parse(m.start)) || new Date(m.start).toISOString().slice(0,10) !== m.start || m.start < '2000-01-01' || m.start > '2100-12-31') throw new Error('Selecciona una fecha válida.');
   return { name: m.name.trim(), age: Number(m.age), area: m.area, start: m.start, months: Number(m.months) };
 }
+
+export const normalizeName = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/\s+/g, ' ');
+export function remainingLabel(end, on = today()) {
+  if (end <= on) return '';
+  let months = (Number(end.slice(0,4))-Number(on.slice(0,4)))*12 + Number(end.slice(5,7))-Number(on.slice(5,7));
+  if (addMonths(on, months) > end) months--;
+  const days = daysBetween(addMonths(on, months), end);
+  return [months ? `${months} ${months === 1 ? 'mes' : 'meses'}` : '', days ? `${days} ${days === 1 ? 'día' : 'días'}` : ''].filter(Boolean).join(' y ');
+}
+export function validateComment(data) {
+  if (typeof data.message !== 'string' || data.message.trim().length < 10 || data.message.length > 2000) throw new Error('Escribe un comentario de 10 a 2000 caracteres.');
+  if (typeof data.name !== 'string' || data.name.length > 100) throw new Error('El nombre debe tener hasta 100 caracteres.');
+  return {name: data.name.trim(), message: data.message.trim()};
+}

@@ -1,7 +1,9 @@
 import './hero.js';
 import './fuel.js';
+import './mobile.css';
+import './comments.js';
 import { getConfig, lookup } from './data.js';
-import { membership, dateLabel, escapeHTML as esc, areaName } from './shared.js';
+import { membership, dateLabel, escapeHTML as esc, areaName, remainingLabel } from './shared.js';
 const $ = s => document.querySelector(s);
 $('#year').textContent = new Date().getFullYear();
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -24,17 +26,17 @@ document.querySelectorAll('[data-gallery]').forEach(button => button.addEventLis
 gallery.querySelector('.dialog-close').onclick = () => gallery.close();
 gallery.addEventListener('click', e => { if (e.target === gallery) { const r = gallery.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) gallery.close(); } });
 gallery.addEventListener('close', () => document.body.classList.remove('modal-open'));
-$('#gallery-membership').onclick = () => { gallery.close(); $('#membresia').scrollIntoView({ behavior: reduceMotion ? 'instant' : 'smooth' }); $('#member-id').focus({ preventScroll: true }); };
-$('.show-password').onclick = () => { const input = $('#member-code'), show = input.type === 'password'; input.type = show ? 'text' : 'password'; $('.show-password').textContent = show ? 'Ocultar' : 'Ver'; $('.show-password').setAttribute('aria-label', show ? 'Ocultar código' : 'Mostrar código'); };
+$('#gallery-membership').onclick = () => { gallery.close(); $('#membresia').scrollIntoView({ behavior: reduceMotion ? 'instant' : 'smooth' }); $('#member-name').focus({ preventScroll: true }); };
+
 getConfig().then(c => { $('#demo-hint').hidden = c.mode !== 'demo'; }).catch(() => {});
 $('#membership-form').addEventListener('submit', async e => {
   e.preventDefault(); const button = e.target.querySelector('[type=submit]'); button.disabled = true; button.textContent = 'Consultando…'; $('#membership-error').textContent = '';
   try {
-    const member = await lookup($('#member-id').value, $('#member-code').value), m = membership(member);
+    const member = await lookup($('#member-name').value), m = membership(member);
     const main = m.state === 'pending' ? 'PRÓXIMO INICIO' : m.days < 0 ? 'VENCIÓ HACE' : m.days === 0 ? 'VENCE' : 'TE QUEDAN';
-    $('#membership-result').innerHTML = `<div class="result-card"><span class="badge ${m.state}">${m.label}</span><p class="result-name">${esc(member.name)}</p><p class="eyebrow" style="margin:20px 0 0">${main}</p><div class="result-days">${m.state === 'pending' ? dateLabel(member.start) : m.days === 0 ? 'Hoy' : Math.abs(m.days)}${m.days !== 0 && m.state !== 'pending' ? '<small>días</small>' : ''}</div><div class="progress"><span style="width:${m.progress}%"></span></div><dl class="result-facts"><div><dt>MODALIDAD</dt><dd>${areaName(member.area)}</dd></div><div><dt>SOCIO</dt><dd>#${member.id}</dd></div><div><dt>INICIO</dt><dd>${dateLabel(member.start)}</dd></div><div><dt>VENCIMIENTO</dt><dd>${dateLabel(m.end)}</dd></div></dl><p class="result-note">${m.state === 'expired' || m.state === 'soon' ? 'Renueva en recepción y sigue entrenando con la familia.' : m.state === 'pending' ? 'Tu membresía estará lista en la fecha de inicio.' : 'Todo listo. Nos vemos en tu próximo entrenamiento.'}</p><button class="button secondary full" id="new-query">Nueva consulta</button></div>`;
+    $('#membership-result').innerHTML = `<div class="result-card"><span class="badge ${m.state}">${m.label}</span><p class="result-name">${esc(member.name)}</p><p class="eyebrow" style="margin:20px 0 0">${main}</p><div class="result-days">${m.state === 'pending' ? dateLabel(member.start) : m.days === 0 ? 'Hoy' : Math.abs(m.days)}${m.days !== 0 && m.state !== 'pending' ? '<small>días</small>' : ''}</div><p class="remaining-months">${m.state === 'pending' ? member.months + (member.months === 1 ? ' mes contratado' : ' meses contratados') : m.days > 0 ? remainingLabel(m.end) : ''}</p><div class="progress"><span style="width:${m.progress}%"></span></div><dl class="result-facts"><div><dt>MODALIDAD</dt><dd>${areaName(member.area)}</dd></div><div><dt>SOCIO</dt><dd>#${member.id}</dd></div><div><dt>INICIO</dt><dd>${dateLabel(member.start)}</dd></div><div><dt>VENCIMIENTO</dt><dd>${dateLabel(m.end)}</dd></div></dl><p class="result-note">${m.state === 'expired' || m.state === 'soon' ? 'Renueva en recepción y sigue entrenando con la familia.' : m.state === 'pending' ? 'Tu membresía estará lista en la fecha de inicio.' : 'Todo listo. Nos vemos en tu próximo entrenamiento.'}</p><button class="button secondary full" id="new-query">Nueva consulta</button></div>`;
     e.target.hidden = true; $('#membership-result').hidden = false;
-    $('#new-query').onclick = () => { $('#membership-result').hidden = true; $('#membership-result').replaceChildren(); e.target.hidden = false; $('#member-code').value = ''; $('#member-id').focus(); };
+    $('#new-query').onclick = () => { $('#membership-result').hidden = true; $('#membership-result').replaceChildren(); e.target.hidden = false;  $('#member-name').focus(); };
     $('#new-query').focus({ preventScroll: true });
   } catch (err) { $('#membership-error').textContent = err.name === 'TimeoutError' ? 'La consulta tardó demasiado. Inténtalo de nuevo.' : err.message; }
   finally { button.disabled = false; button.textContent = 'Consultar mi membresía'; }

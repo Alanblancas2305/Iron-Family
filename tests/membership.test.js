@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { addMonths, membership, validateMember } from '../src/shared.js';
+import { addMonths, membership, validateMember, remainingLabel, normalizeName } from '../src/shared.js';
 test('vencimientos al final del mes y año bisiesto',()=>{
   assert.equal(addMonths('2026-01-31',1),'2026-02-28');
   assert.equal(addMonths('2024-01-31',1),'2024-02-29');
@@ -20,4 +20,11 @@ test('fechas imposibles y campos fuera de rango se rechazan',()=>{
   const m={name:'Alex Hernández',age:27,area:'gym',start:'2026-10-07',months:1};
   assert.equal(validateMember(m).name,m.name);
   for(const patch of [{start:'2026-02-30'},{age:0},{months:2},{area:'admin'},{name:'A'}])assert.throws(()=>validateMember({...m,...patch}));
+});
+
+test('nombre sin acentos y meses restantes de calendario',()=>{
+assert.equal(normalizeName('  Álex   HERNÁNDEZ '),'alex hernandez');
+assert.equal(remainingLabel('2027-01-07','2026-10-07'),'3 meses');
+assert.equal(remainingLabel('2026-11-08','2026-10-07'),'1 mes y 1 día');
+assert.equal(remainingLabel('2026-02-28','2026-01-31'),'1 mes');
 });

@@ -26,9 +26,9 @@ Si solicita la configuración:
 
 ### Prueba rápida
 
-- En **Mi membresía**, escribe socio **1001**, código **IRON2010**.
+- En **Mi membresía**, escribe **Alex Hernández**.
 - En **Administración**, pulsa **Explorar administración**.
-- Registra un socio, copia su número y código desde su ficha y consúltalo en el portal del **mismo navegador**.
+- Registra un socio, copia su nombre completo desde su ficha y consúltalo en el portal del **mismo navegador**.
 - Prueba las flechas del carrusel, las pestañas de sabor y los dos tamaños. En celular también puedes deslizar la imagen.
 
 ## Dos formas de usarlo
@@ -61,7 +61,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 5. Activa las variables en los entornos de Vercel donde las usarás y vuelve a desplegar (**Deployments → Redeploy**).
-6. Abre administración, entra con tus credenciales y registra a tus socios. Cada uno recibe un número y código personal; su ficha tiene **Copiar acceso**.
+6. Abre administración, entra con tus credenciales y registra a tus socios. Cada uno consulta con su nombre completo; su ficha tiene **Copiar acceso**.
 7. Comprueba desde otro dispositivo que la consulta devuelve la membresía registrada.
 
 El modo en línea se activa solo con la configuración completa. Una configuración parcial muestra un error; nunca cambia silenciosamente a datos ficticios. Las variables privadas no llevan prefijo `VITE_` y no se incorporan al código del navegador.

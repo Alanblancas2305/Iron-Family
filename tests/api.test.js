@@ -9,6 +9,7 @@ test('API: aislamiento, sesión, validación, CRUD y consulta mínima',async()=>
   const oldFetch=global.fetch;let stored=[],next=1001,seenHeaders;
   global.fetch=async(url,opt)=>{seenHeaders=opt.headers;const u=new URL(url),b=opt.body?JSON.parse(opt.body):{};let value;
     if(u.pathname.endsWith('iron_take_budget'))value=true;
+    else if(u.pathname.endsWith('iron_lookup_name'))value=stored.filter(x=>x.name===b.p_name).map(({id,name,area,start,months})=>({id,name,area,start,months}));
     else if(opt.method==='POST'){const row={id:next++,...b};stored.push(row);value=[row];}
     else if(opt.method==='PATCH'){const id=Number(u.searchParams.get('id').slice(3));const row=stored.find(x=>x.id===id);Object.assign(row,b);value=[row];}
     else if(opt.method==='DELETE'){const id=Number(u.searchParams.get('id').slice(3));value=stored.filter(x=>x.id===id);stored=stored.filter(x=>x.id!==id);}
@@ -32,8 +33,14 @@ test('API: aislamiento, sesión, validación, CRUD y consulta mínima',async()=>
     const created=await call('members',{method:'POST',body:member,headers});assert.equal(created.code,201);assert.equal(created.body.access_code.length,20);
     assert.equal(seenHeaders.apikey,'test-server-key');
     const list=await call('members',{headers});assert.equal(list.body.length,1);
-    const looked=await call('lookup',{method:'POST',body:{id:created.body.id,code:created.body.access_code}});assert.equal(looked.code,200);assert.equal(looked.body.access_code,undefined);assert.equal(looked.body.age,undefined);
-    assert.equal((await call('lookup',{method:'POST',body:{id:1001,code:'WRONGCODE'}})).code,404);
+    const looked=await call('lookup',{method:'POST',body:{name:member.name}});assert.equal(looked.code,200);assert.equal(looked.body.access_code,undefined);assert.equal(looked.body.age,undefined);
+    assert.equal((await call('lookup',{method:'POST',body:{name:'Nombre inexistente'}})).code,404);
+    assert.equal((await call('comments')).code,401);
+    assert.equal((await call('comments',{method:'POST',body:{name:'',message:'Corto'}})).code,400);
+    assert.equal((await call('lookup',{method:'POST',body:{name:'A'}})).code,400);
+    stored.push({...stored[0],id:1002});
+    assert.equal((await call('lookup',{method:'POST',body:{name:member.name}})).code,409);
+    stored.pop();
     assert.equal((await call('members',{method:'PATCH',body:{...member,id:1001,months:3},headers})).body.months,3);
     assert.equal((await call('members',{method:'DELETE',body:{id:1001},headers})).code,200);assert.equal(stored.length,0);
     assert.match((await call('logout',{method:'POST',body:{},headers})).headers['Set-Cookie'],/Max-Age=0/);

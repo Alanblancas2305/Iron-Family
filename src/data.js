@@ -1,4 +1,4 @@
-import { addMonths, today, validateMember } from './shared.js';
+import { addMonths, today, validateMember, normalizeName, validateComment } from './shared.js';
 const KEY = 'iron_family_demo_v1';
 let config;
 export async function api(action, data, method = data ? 'POST' : 'GET') {
@@ -44,10 +44,31 @@ export async function saveMember(data) {
   rows.push(member); write(rows); return member;
 }
 export async function deleteMember(id) { if ((await getConfig()).mode === 'cloud') return api('members', { id }, 'DELETE'); write(read().filter(m => m.id !== Number(id))); }
-export async function lookup(id, code) {
-  if ((await getConfig()).mode === 'cloud') return api('lookup', { id: Number(id), code: code.trim() });
-  const match = read().find(m => m.id === Number(id) && m.access_code === code.trim().toUpperCase());
-  if (!match) throw new Error('No encontramos una membresía con esos datos. Verifica tu número y código en recepción.');
-  return { id: match.id, name: match.name, area: match.area, start: match.start, months: match.months };
+export async function lookup(name) {
+  name = name.trim();
+  if (name.length < 3 || name.length > 100) throw new Error('Escribe tu nombre completo.');
+  if ((await getConfig()).mode === 'cloud') return api('lookup', { name });
+  const matches = read().filter(m => normalizeName(m.name) === normalizeName(name));
+  if (!matches.length) throw new Error('No encontramos tu membresía. Escribe tu nombre completo como lo registraste en recepción.');
+  if (matches.length > 1) throw new Error('Hay más de un registro con ese nombre. Acércate a recepción para identificar tu membresía.');
+  const {id, name: fullName, area, start, months} = matches[0];
+  return {id, name: fullName, area, start, months};
+}
+const COMMENTS_KEY = 'iron_family_comments_v1';
+function readComments() { return JSON.parse(localStorage.getItem(COMMENTS_KEY) || '[]'); }
+export async function sendComment(data) {
+  const fields = validateComment(data);
+  if ((await getConfig()).mode === 'cloud') return api('comments', fields);
+  const rows = readComments();
+  rows.unshift({...fields, id: crypto.randomUUID(), created_at: new Date().toISOString(), reviewed: false});
+  try { localStorage.setItem(COMMENTS_KEY, JSON.stringify(rows)); } catch { throw new Error('No se pudo guardar tu comentario. Intenta de nuevo.'); }
+  return {ok:true};
+}
+export async function listComments() { return (await getConfig()).mode === 'cloud' ? api('comments') : readComments(); }
+export async function reviewComment(id) {
+  if ((await getConfig()).mode === 'cloud') return api('comments', {id}, 'PATCH');
+  const rows = readComments(); const row = rows.find(x => x.id === id);
+  if (row) row.reviewed = true;
+  localStorage.setItem(COMMENTS_KEY, JSON.stringify(rows));
 }
 export async function resetDemo() { if ((await getConfig()).mode !== 'demo') throw new Error('Esta opción solo existe en la demostración.'); write(seed()); }
