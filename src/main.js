@@ -1,3 +1,4 @@
+import './hero.js';
 import './fuel.js';
 import { getConfig, lookup } from './data.js';
 import { membership, dateLabel, escapeHTML as esc, areaName } from './shared.js';
