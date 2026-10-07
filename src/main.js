@@ -1,3 +1,4 @@
+import './fuel.js';
 import { getConfig, lookup } from './data.js';
 import { membership, dateLabel, escapeHTML as esc, areaName } from './shared.js';
 const $ = s => document.querySelector(s);
@@ -23,27 +24,6 @@ gallery.querySelector('.dialog-close').onclick = () => gallery.close();
 gallery.addEventListener('click', e => { if (e.target === gallery) { const r = gallery.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) gallery.close(); } });
 gallery.addEventListener('close', () => document.body.classList.remove('modal-open'));
 $('#gallery-membership').onclick = () => { gallery.close(); $('#membresia').scrollIntoView({ behavior: reduceMotion ? 'instant' : 'smooth' }); $('#member-id').focus({ preventScroll: true }); };
-const flavors = [
-  ['Chocolate', 'Un clásico que siempre se antoja.'], ['Fresa', 'Tu pausa más fresca.'], ['Vainilla', 'Suave, cremosa y a tu ritmo.'], ['Galleta', 'Tu sabor favorito, después del esfuerzo.'], ['Capuchino', 'El sabor que le va a tu ritual.']
-];
-let current = 0, timer;
-$('.flavor-tabs').innerHTML = flavors.map(([name], i) => `<button data-flavor="${i}" aria-pressed="${i === 0}">${name}</button>`).join('');
-function setFlavor(index) {
-  current = (index + flavors.length) % flavors.length;
-  const [name, note] = flavors[current];
-  $('#flavor-name').textContent = name; $('#flavor-note').textContent = note; $('#flavor-count').textContent = `0${current + 1} / 05`;
-  document.querySelectorAll('[data-flavor]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.flavor === current));
-  $('#shake-photo').setAttribute('aria-label', `Malteada de ${name.toLowerCase()}, imagen ilustrativa`);
-  clearTimeout(timer); $('#shake-photo').classList.add('changing');
-  timer = setTimeout(() => { $('#shake-photo').style.backgroundPosition = (current * 25) + '% 50%'; $('#shake-photo').classList.remove('changing'); }, reduceMotion ? 0 : 160);
-}
-$('#shake-prev').onclick = () => setFlavor(current - 1); $('#shake-next').onclick = () => setFlavor(current + 1);
-$('.flavor-tabs').addEventListener('click', e => { const b = e.target.closest('[data-flavor]'); if (b) setFlavor(+b.dataset.flavor); });
-$('.shake-carousel').addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); setFlavor(current + (e.key === 'ArrowRight' ? 1 : -1)); } });
-let touchX, touchY;
-$('.shake-stage').addEventListener('touchstart', e => { touchX = e.changedTouches[0].clientX; touchY = e.changedTouches[0].clientY; }, { passive: true });
-$('.shake-stage').addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - touchX, dy = e.changedTouches[0].clientY - touchY; if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) setFlavor(current + (dx < 0 ? 1 : -1)); }, { passive: true });
-document.querySelectorAll('[data-size]').forEach(button => button.onclick = () => { document.querySelectorAll('[data-size]').forEach(b => { const selected = b === button; b.classList.toggle('active', selected); b.setAttribute('aria-pressed', selected); }); $('#shake-price').innerHTML = (button.dataset.size === 'small' ? '$25' : '$35') + '<small>MXN</small>'; });
 $('.show-password').onclick = () => { const input = $('#member-code'), show = input.type === 'password'; input.type = show ? 'text' : 'password'; $('.show-password').textContent = show ? 'Ocultar' : 'Ver'; $('.show-password').setAttribute('aria-label', show ? 'Ocultar código' : 'Mostrar código'); };
 getConfig().then(c => { $('#demo-hint').hidden = c.mode !== 'demo'; }).catch(() => {});
 $('#membership-form').addEventListener('submit', async e => {
