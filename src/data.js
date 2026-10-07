@@ -1,0 +1,53 @@
+import { addMonths, today, validateMember } from './shared.js';
+const KEY = 'iron_family_demo_v1';
+let config;
+export async function api(action, data, method = data ? 'POST' : 'GET') {
+  let response;
+  try { response = await fetch('/api/family?action=' + action, {
+    method, headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
+    ...(data ? { body: JSON.stringify(data) } : {}), signal: AbortSignal.timeout(15000)
+  }); } catch (error) { throw new Error(error.name === 'TimeoutError' ? 'La conexión tardó demasiado. Inténtalo de nuevo.' : 'No se pudo conectar. Revisa tu conexión a internet e inténtalo de nuevo.'); }
+  const type = response.headers.get('content-type') || '';
+  if (!type.includes('application/json')) throw new Error('Abre el proyecto con npm run dev o en Vercel.');
+  const result = await response.json();
+  if (!response.ok) { const error = new Error(result.error || 'No se pudo completar la solicitud.'); error.status = response.status; throw error; }
+  return result;
+}
+export async function getConfig() { return config ||= await api('config'); }
+function seed() {
+  const now = today(), prior = addMonths(now, -1);
+  return [
+    { id: 1001, name: 'Alex Hernández', age: 27, area: 'gym', start: now, months: 1, access_code: 'IRON2010' },
+    { id: 1002, name: 'Mariana López', age: 24, area: 'cf', start: now, months: 3, access_code: 'CROSS2026' },
+    { id: 1003, name: 'Daniel Torres', age: 31, area: 'gym', start: addMonths(now, -2), months: 1, access_code: 'FAMILY03' },
+    { id: 1004, name: 'Andrea García', age: 29, area: 'cf', start: prior, months: 1, access_code: 'FAMILY04' },
+    { id: 1005, name: 'Luis Ramírez', age: 35, area: 'gym', start: now, months: 6, access_code: 'FAMILY05' },
+    { id: 1006, name: 'Sofía Martínez', age: 26, area: 'cf', start: now, months: 12, access_code: 'FAMILY06' }
+  ];
+}
+function read() {
+  try { const value = localStorage.getItem(KEY); if (value) { const parsed = JSON.parse(value); if (!Array.isArray(parsed)) throw new Error(); return parsed; } const initial = seed(); write(initial); return initial; }
+  catch { throw new Error('No pudimos leer los datos de prueba. Habilita el almacenamiento del navegador o restáuralos desde Configuración.'); }
+}
+function write(rows) { try { localStorage.setItem(KEY, JSON.stringify(rows)); } catch { throw new Error('No se pudieron guardar los cambios en este navegador.'); } }
+export async function listMembers() { return (await getConfig()).mode === 'cloud' ? api('members') : read(); }
+export async function saveMember(data) {
+  const fields = validateMember(data);
+  if ((await getConfig()).mode === 'cloud') return api('members', { ...fields, ...(data.id ? { id: Number(data.id) } : {}) }, data.id ? 'PATCH' : 'POST');
+  const rows = read();
+  if (data.id) {
+    const index = rows.findIndex(r => r.id === Number(data.id));
+    if (index < 0) throw new Error('Este socio ya no existe. Actualiza la lista.');
+    rows[index] = { ...rows[index], ...fields }; write(rows); return rows[index];
+  }
+  const member = { ...fields, id: Math.max(1000, ...rows.map(r => r.id)) + 1, access_code: crypto.randomUUID().replaceAll('-', '').slice(0, 12).toUpperCase() };
+  rows.push(member); write(rows); return member;
+}
+export async function deleteMember(id) { if ((await getConfig()).mode === 'cloud') return api('members', { id }, 'DELETE'); write(read().filter(m => m.id !== Number(id))); }
+export async function lookup(id, code) {
+  if ((await getConfig()).mode === 'cloud') return api('lookup', { id: Number(id), code: code.trim() });
+  const match = read().find(m => m.id === Number(id) && m.access_code === code.trim().toUpperCase());
+  if (!match) throw new Error('No encontramos una membresía con esos datos. Verifica tu número y código en recepción.');
+  return { id: match.id, name: match.name, area: match.area, start: match.start, months: match.months };
+}
+export async function resetDemo() { if ((await getConfig()).mode !== 'demo') throw new Error('Esta opción solo existe en la demostración.'); write(seed()); }
