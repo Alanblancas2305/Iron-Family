@@ -11,3 +11,6 @@
 .desktop-nav{font-size:14px}.hero-desc,.section-copy,.fuel-copy>p:not(.eyebrow){font-size:16px}label{font-size:14px}.flavor-tabs button{font-size:12px}.size>span{font-size:12px}.membership-box>p{font-size:14px}.photo-note{font-size:12px}.mp-payment{display:inline-flex;align-items:center;gap:3px;background:#f7f7f7;border-radius:4px;height:37px;padding:4px 6px;color:#182d50}.payment-logos .mp-payment img{width:29px;height:27px;padding:0;background:none}.mp-payment>span{font-size:10px;font-weight:900;line-height:1.05;letter-spacing:-.02em}
 @media(max-width:580px){.fuel-copy h2 br:nth-of-type(2),.fuel-copy h2 .red br{display:block}.fuel-copy h2{font-size:46px}.hero-art{inset:400px -6% 60px -6%}.hero-art img{object-fit:contain}.hero-desc{font-size:14px}.flavor-tabs button{font-size:11px;padding:9px}.mp-payment{height:32px;padding:3px 4px}.payment-logos .mp-payment img{width:23px;height:24px}.mp-payment>span{font-size:9px}.payment-logos{gap:8px}.photo-note{font-size:11px}}
 @media(prefers-reduced-motion:reduce){:root{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.motion .reveal{opacity:1;transform:none}.hero-art img{transform:none}}
+
+.brand-logo{width:54px;height:54px;object-fit:cover;border-radius:50%;flex:none;box-shadow:0 0 0 1px #ffffff30}
+@media(max-width:800px){.brand-logo{width:46px;height:46px}}

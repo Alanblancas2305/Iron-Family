@@ -2,16 +2,17 @@
 <html lang="es-MX">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#101010"><meta name="description" content="Iron Family. Desde 2010 forjando personas con carácter. Gimnasio, entrenamiento funcional y una comunidad que entrena contigo.">
-  <title>IRON FAMILY — Originales desde 2010</title>
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#101010"><meta name="description" content="Iron Panthers. Desde 2010 forjando personas con carácter. Gimnasio, entrenamiento funcional y una comunidad que entrena contigo.">
+  <title>IRON PANTHERS — Originales desde 2010</title>
+  <link rel="icon" href="/assets/iron-panthers-logo.png" type="image/png">
   <link rel="preload" href="/assets/hero.webp" as="image">
+  <link rel="preload" href="/assets/iron-panthers-logo.png" as="image">
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
   <a href="#contenido" class="skip">Saltar al contenido</a>
   <header class="site-header">
-    <a class="brand" href="/" aria-label="Iron Family, inicio"><span class="brand-symbol" aria-hidden="true">IF<span>★</span></span><span>IRON FAMILY<small>ORIGINALES DESDE 2010</small></span></a>
+    <a class="brand" href="/" aria-label="Iron Panthers, inicio"><img class="brand-logo" src="/assets/iron-panthers-logo.png" alt="" width="54" height="54"><span>IRON PANTHERS<small>ORIGINALES DESDE 2010</small></span></a>
     <nav class="desktop-nav" aria-label="Navegación principal"><a href="#modalidades">Modalidades</a><a href="#fuel">Iron Fuel</a><a href="#coaches">La familia</a></nav>
     <div class="header-actions"><a class="button small" href="#membresia">Mi membresía</a><button class="menu-toggle icon-button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button></div>
     <nav id="mobile-nav" class="mobile-nav" aria-label="Navegación móvil" hidden><a href="#modalidades">Modalidades</a><a href="#fuel">Iron Fuel</a><a href="#coaches">La familia</a><a href="/admin.html">Administración</a></nav>
@@ -19,7 +20,7 @@
   <main id="contenido">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-art"><img src="/assets/hero.webp" alt="Mancuerna de hierro negro con detalles de acero y luz roja" fetchpriority="high" width="1536" height="1024"></div>
-      <div class="hero-copy"><p class="eyebrow"><span class="red-line"></span> EL HIERRO NOS UNE.</p><h1 id="hero-title" class="rough">LA FUERZA<br>SE FORJA.<br><span class="red">LA FAMILIA,<br class="mobile-only"> TAMBIÉN.</span></h1><p class="hero-desc">Desde 2010 forjando personas con carácter.<br>Siempre auténticos. Siempre Iron Family.</p><div class="hero-buttons"><a href="#modalidades" class="button">Encuentra tu modalidad</a><a href="#membresia" class="text-link">Ya soy parte de la familia</a></div></div>
+      <div class="hero-copy"><p class="eyebrow"><span class="red-line"></span> EL HIERRO NOS UNE.</p><h1 id="hero-title" class="rough">LA FUERZA<br>SE FORJA.<br><span class="red">EL INSTINTO,<br class="mobile-only"> TAMBIÉN.</span></h1><p class="hero-desc">Desde 2010 forjando personas con carácter.<br>Siempre auténticos. Siempre Iron Panthers.</p><div class="hero-buttons"><a href="#modalidades" class="button">Encuentra tu modalidad</a><a href="#membresia" class="text-link">Ya soy parte de la familia</a></div></div>
       <div class="hero-stamp" aria-hidden="true"><span>EST.</span><strong>2010</strong><span>HECHOS DE HIERRO</span></div>
       <div class="hero-bottom"><span>01 / UN ORIGEN. LA MISMA PASIÓN.</span><a href="#modalidades">SIGUE EL RITMO <span aria-hidden="true">↓</span></a></div>
     </section>
@@ -57,13 +58,13 @@
       </div>
     </section>
     <section id="membresia" class="section wrap membership-section">
-      <div class="reveal"><p class="eyebrow">03 / SIGUE CON TODO</p><h2 class="rough">TU PROGRESO<br>NO SE <span class="red">DETIENE.</span></h2><p class="section-copy">Consulta tu membresía y mantén el ritmo.<br>Tu próximo entrenamiento te espera.</p><div class="member-decoration" aria-hidden="true"><span>IF</span><div>UNA FAMILIA.<br>MUCHAS METAS.</div></div></div>
+      <div class="reveal"><p class="eyebrow">03 / SIGUE CON TODO</p><h2 class="rough">TU PROGRESO<br>NO SE <span class="red">DETIENE.</span></h2><p class="section-copy">Consulta tu membresía y mantén el ritmo.<br>Tu próximo entrenamiento te espera.</p><div class="member-decoration" aria-hidden="true"><span>IP</span><div>UNA FAMILIA.<br>MUCHAS METAS.</div></div></div>
       <div class="membership-box reveal"><div class="box-heading"><span class="eyebrow">ACCESO A SOCIOS</span><span aria-hidden="true">✳</span></div><h3>¿Listo para la siguiente?</h3><p>Ingresa tu número y el código que recibiste en recepción.</p><form id="membership-form"><label for="member-id">Número de socio</label><input id="member-id" name="id" inputmode="numeric" pattern="[0-9]+" required placeholder="Ej. 1001" autocomplete="off"><label for="member-code">Código de acceso</label><div class="password-wrap"><input id="member-code" name="code" type="password" required minlength="6" maxlength="64" placeholder="Tu código personal" autocomplete="off"><button type="button" class="show-password" aria-label="Mostrar código">Ver</button></div><p class="form-error" id="membership-error" role="alert"></p><button class="button full" type="submit">Consultar mi membresía</button></form><div id="membership-result" hidden aria-live="polite"></div><p id="demo-hint" class="demo-note" hidden>Vista de prueba · Socio <b>1001</b> · Código <b>IRON2010</b></p></div>
     </section>
     <section id="coaches" class="coaches-section"><div class="wrap"><div class="section-heading reveal"><div><p class="eyebrow">04 / LA FUERZA DETRÁS DE LA TUYA</p><h2 class="rough">AQUÍ, SE ENTRENA<br><span class="red">EN FAMILIA.</span></h2></div><p>Personas que te acompañan.<br>Una comunidad que te impulsa.</p></div><div class="team-photo reveal"><img src="/assets/coaches.webp" loading="lazy" alt="Equipo ilustrativo de tres coaches, dos mujeres y un hombre, en un gimnasio" width="1536" height="1024"><div class="team-caption"><span class="rough">EL EQUIPO IRON</span><span>DISCIPLINA QUE SE COMPARTE.</span></div></div><p class="photo-note">Equipo ilustrativo. Espacio reservado para nuestros coaches.</p></div></section>
     <section class="payments wrap"><p>Tu entrenamiento.<br><strong>Tu forma de pagar.</strong></p><div class="payment-logos" aria-label="Aceptamos Visa, Mastercard, Carnet, American Express y Mercado Pago"><img src="/assets/visa.svg" alt="Visa" width="64" height="42" loading="lazy"><img src="/assets/mastercard.svg" alt="Mastercard" width="64" height="42" loading="lazy"><img src="/assets/carnet.svg" alt="Carnet" width="64" height="42" loading="lazy"><img src="/assets/amex.svg" alt="American Express" width="64" height="42" loading="lazy"><span class="mp-payment"><img src="/assets/mercadopago.svg" alt="Mercado Pago" width="29" height="27" loading="lazy"><span aria-hidden="true">mercado<br>pago</span></span></div><small>Pagos en recepción</small></section>
   </main>
-  <footer class="site-footer wrap"><a class="brand" href="#"><span class="brand-symbol" aria-hidden="true">IF<span>★</span></span><span>IRON FAMILY<small>ORIGINALES DESDE 2010</small></span></a><p>El hierro nos une. La familia nos mueve.</p><a href="/admin.html">Administración</a><div class="footer-bottom"><span>© <span id="year"></span> IRON FAMILY</span><span>FUERZA · CARÁCTER · COMUNIDAD</span></div></footer>
+  <footer class="site-footer wrap"><a class="brand" href="#"><img class="brand-logo" src="/assets/iron-panthers-logo.png" alt="" width="54" height="54"><span>IRON PANTHERS<small>ORIGINALES DESDE 2010</small></span></a><p>El hierro nos une. La familia nos mueve.</p><a href="/admin.html">Administración</a><div class="footer-bottom"><span>© <span id="year"></span> IRON PANTHERS</span><span>FUERZA · CARÁCTER · COMUNIDAD</span></div></footer>
   <dialog id="gallery-dialog" class="gallery-dialog"><button class="dialog-close icon-button" aria-label="Cerrar galería">×</button><div class="gallery-image"><img id="gallery-photo" alt="" width="1400" height="1000"></div><div class="gallery-details"><p class="eyebrow" id="gallery-eyebrow"></p><h2 class="rough" id="gallery-title"></h2><p id="gallery-description"></p><ul id="gallery-features"></ul><p class="photo-note">Fotografía ilustrativa; se sustituirá por fotos del espacio real.</p><button class="button" id="gallery-membership">Consultar mi membresía</button></div></dialog>
   <script type="module" src="/src/main.js"></script>
 </body>
