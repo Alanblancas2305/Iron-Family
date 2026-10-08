@@ -43,6 +43,13 @@ test('API: aislamiento, sesión, validación, CRUD y consulta mínima',async()=>
     stored.pop();
     assert.equal((await call('members',{method:'PATCH',body:{...member,id:1001,months:3},headers})).body.months,3);
     assert.equal((await call('members',{method:'DELETE',body:{id:1001},headers})).code,200);assert.equal(stored.length,0);
+    stored.push({id:7001,name:'Ejemplo',message:'Excelente atención.'});
+    assert.equal((await call('comments',{method:'DELETE',body:{id:7001}})).code,401);
+    assert.equal((await call('comments',{method:'DELETE',body:{id:7001},headers:{...headers,origin:'https://attacker.example'}})).code,403);
+    assert.equal((await call('comments',{method:'DELETE',body:{id:'invalid'},headers})).code,400);
+    assert.equal((await call('comments',{method:'DELETE',body:{id:7001},headers})).code,200);
+    assert.equal(stored.length,0);
+    assert.equal((await call('comments',{method:'DELETE',body:{id:7001},headers})).code,404);
     assert.match((await call('logout',{method:'POST',body:{},headers})).headers['Set-Cookie'],/Max-Age=0/);
   }finally{global.fetch=oldFetch;for(const [k,v] of Object.entries(backup)){if(v===undefined)delete process.env[k];else process.env[k]=v;}}
 });

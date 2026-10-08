@@ -23,3 +23,14 @@
 @media(min-width:951px) and (max-height:850px){
  #admin-main{padding-top:16px;padding-bottom:16px}.reception-title{margin-bottom:14px}.reception-title h1{font-size:26px}.reception-title .eyebrow{margin-bottom:7px}.reception-title p:last-child{margin-top:6px}.admin-title .register-cta{min-height:58px;padding:10px 16px}.reception-stats .stat-card{padding:12px 16px}.reception-stats .stat-card>strong{font-size:32px;margin-top:6px}.reception-stats .stat-card>small{margin-top:6px;font-size:10px}.reception-toolbar{margin:10px 0}.reception-toolbar .button{min-height:34px}.expiry-heading{padding:12px 16px}.expiry-heading h2{font-size:19px}.expiry-heading>strong{height:36px;min-width:36px;font-size:21px}.expiry-list{height:max(150px,calc(100svh - 630px))}.expiry-footer{padding:10px 16px;min-height:38px}.reception-bottom{margin-top:12px}.reception-bottom #comment-summary,.reception-payment{padding:12px 16px}.quick-icon{height:36px;width:36px}.reception-payment small{font-size:10px}
 }
+
+/* Large, readable renewal cards for the reception screen. */
+.expiry-member{gap:18px;padding:20px;flex-wrap:wrap}
+.expiry-person{flex:1 1 150px}
+.expiry-person>button{font-size:clamp(22px,2.2vw,30px);font-weight:800;line-height:1.2}
+.expiry-person>small{font-size:13px;margin-top:6px}
+.expiry-member .renew-button{min-height:58px;min-width:138px;padding:14px 20px;font-size:19px;border-width:2px}
+.inbox-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.inbox-actions .delete-comment{color:#ffb1aa;border-color:#98514f}
+.example-label{font-size:12px;color:#f9cc75;margin-top:12px}
+@media(max-width:480px){.expiry-member .renew-button{width:100%}.expiry-person>button{font-size:24px}}

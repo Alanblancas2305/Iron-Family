@@ -37,7 +37,7 @@ Si solicita la configuración:
 
 ### Demostración (funciona al subirlo)
 
-Sin variables de entorno, el sitio utiliza seis socios ficticios y guarda cambios en el navegador. Cada dispositivo tiene su propia demostración. No uses datos personales reales en este modo. El sitio lo indica en administración y en la consulta.
+Sin variables de entorno, el sitio utiliza 66 miembros ficticios (los seis originales más 60 nuevos) y 12 comentarios positivos de ejemplo y guarda cambios en el navegador. Cada dispositivo tiene su propia demostración. No uses datos personales reales en este modo. El sitio lo indica en administración y en la consulta.
 
 ### Membresías reales compartidas
 

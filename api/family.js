@@ -92,14 +92,14 @@ export default async function handler(req,res) {
       return res.status(200).json(result);
     }
     if(action==='comments') {
-      requireMethod(req,['GET','PATCH']);
+      requireMethod(req,['GET','PATCH','DELETE']);
       if(req.method==='GET') {
         let rows=[],offset=0;
         while(true){const page=await db(`iron_comments?select=*&order=created_at.desc&limit=500&offset=${offset}`);rows.push(...page);if(page.length<500)break;offset+=500;}
         return res.status(200).json(rows);
       }
       if(!validId(body.id))return res.status(400).json({error:'Comentario inválido.'});
-      const result=await db('iron_comments?id=eq.'+Number(body.id),{method:'PATCH',body:{reviewed:true}});
+      const result=await db('iron_comments?id=eq.'+Number(body.id),req.method==='DELETE'?{method:'DELETE'}:{method:'PATCH',body:{reviewed:true}});
       if(!result?.length)return res.status(404).json({error:'No encontramos el comentario.'});
       return res.status(200).json({ok:true});
     }

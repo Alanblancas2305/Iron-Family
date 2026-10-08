@@ -14,6 +14,18 @@ export async function api(action, data, method = data ? 'POST' : 'GET') {
   return result;
 }
 export async function getConfig() { return config ||= await api('config'); }
+const DEMO_VERSION = 'iron_demo_expanded_v2';
+function extraMembers() {
+  const names = ['Valeria','Diego','Camila','Mateo','Regina','Emiliano','Fernanda','Sebastián','Renata','Santiago','Ximena','Leonardo','Paola','Rodrigo','Natalia','Javier','Daniela','Eduardo','Victoria','Gabriel'];
+  const surnames = ['Mendoza Castillo','Vargas Ríos','Castro Salazar'];
+  const now = today();
+  const shift = days => new Date(Date.parse(now + 'T12:00:00Z') + days * 86400000).toISOString().slice(0,10);
+  return Array.from({length:60},(_,i)=>({id:1007+i,name:`${names[i%20]} ${surnames[Math.floor(i/20)]}`,age:18+i%38,area:i%3===0?'cf':'gym',start:shift(-35),months:1,paid_until:shift(i<20?-(1+i):i<40?(i-20)%8:15+(i-40)*3),access_code:`DEMO${1007+i}`}));
+}
+function seedComments() {
+  const messages = ['Me gusta el ambiente del gimnasio, siempre encuentro motivación para entrenar.','Los entrenadores explican los ejercicios con paciencia y buena actitud.','La consulta de membresía está muy práctica, ahora puedo revisar mi vigencia fácilmente.','Excelente atención en recepción, me ayudaron a resolver mis dudas.','Me gustan las clases de Cross, las rutinas son variadas y entretenidas.','Las instalaciones se sienten cómodas para entrenar a mi ritmo.','La nueva página se ve muy bien desde mi celular.','Muy buena experiencia en Iron Gym, me he sentido bien recibido.','Me gusta tener la información del gimnasio en un solo lugar.','Gracias por el apoyo durante los entrenamientos, me ayuda a mantener la constancia.','Las malteadas son una buena opción después de entrenar.','El equipo de recepción siempre me atiende de manera amable.'];
+  return messages.map((message,i)=>({id:`demo-positive-${i+1}`,name:extraMembers()[i].name,message,example:true,created_at:new Date(Date.now()-i*3600000).toISOString(),reviewed:i>=8}));
+}
 function seed() {
   const now = today(), prior = addMonths(now, -1);
   return [
@@ -22,12 +34,24 @@ function seed() {
     { id: 1003, name: 'Daniel Torres', age: 31, area: 'gym', start: addMonths(now, -2), months: 1, access_code: 'FAMILY03' },
     { id: 1004, name: 'Andrea García', age: 29, area: 'cf', start: prior, months: 1, access_code: 'FAMILY04' },
     { id: 1005, name: 'Luis Ramírez', age: 35, area: 'gym', start: now, months: 6, access_code: 'FAMILY05' },
-    { id: 1006, name: 'Sofía Martínez', age: 26, area: 'cf', start: now, months: 12, access_code: 'FAMILY06' }
+    { id: 1006, name: 'Sofía Martínez', age: 26, area: 'cf', start: now, months: 12, access_code: 'FAMILY06' },
+    ...extraMembers()
   ];
 }
 function read() {
-  try { const value = localStorage.getItem(KEY); if (value) { const parsed = JSON.parse(value); if (!Array.isArray(parsed)) throw new Error(); return parsed; } const initial = seed(); write(initial); return initial; }
-  catch { throw new Error('No pudimos leer los datos de prueba. Habilita el almacenamiento del navegador o restáuralos desde Configuración.'); }
+  try {
+    const value=localStorage.getItem(KEY);
+    const rows=value?JSON.parse(value):seed();
+    if(!Array.isArray(rows)) throw new Error();
+    if(!localStorage.getItem(DEMO_VERSION)) {
+      if(value) {
+        let id=Math.max(1000,...rows.map(m=>Number(m.id)));
+        for(const member of extraMembers()) if(!rows.some(m=>m.access_code===member.access_code)) rows.push({...member,id:++id});
+      }
+      write(rows); localStorage.setItem(DEMO_VERSION,'1');
+    }
+    return rows;
+  } catch { throw new Error('No pudimos leer los datos de prueba. Habilita el almacenamiento del navegador o restáuralos desde Configuración.'); }
 }
 function write(rows) { try { localStorage.setItem(KEY, JSON.stringify(rows)); } catch { throw new Error('No se pudieron guardar los cambios en este navegador.'); } }
 export async function listMembers() { return (await getConfig()).mode === 'cloud' ? api('members') : read(); }
@@ -55,7 +79,19 @@ export async function lookup(name) {
   return {id, name: fullName, area, start, months, paid_until};
 }
 const COMMENTS_KEY = 'iron_family_comments_v1';
-function readComments() { return JSON.parse(localStorage.getItem(COMMENTS_KEY) || '[]'); }
+function readComments() {
+  const rows=JSON.parse(localStorage.getItem(COMMENTS_KEY)||'[]');
+  if(!localStorage.getItem('iron_demo_comments_v2')) {
+    rows.push(...seedComments().filter(c=>!rows.some(r=>r.id===c.id)));
+    localStorage.setItem(COMMENTS_KEY,JSON.stringify(rows));
+    localStorage.setItem('iron_demo_comments_v2','1');
+  }
+  return rows;
+}
+export async function deleteComment(id) {
+  if((await getConfig()).mode==='cloud') return api('comments',{id},'DELETE');
+  localStorage.setItem(COMMENTS_KEY,JSON.stringify(readComments().filter(c=>String(c.id)!==String(id))));
+}
 export async function sendComment(data) {
   const fields = validateComment(data);
   if ((await getConfig()).mode === 'cloud') return api('comments', fields);
@@ -71,7 +107,7 @@ export async function reviewComment(id) {
   if (row) row.reviewed = true;
   localStorage.setItem(COMMENTS_KEY, JSON.stringify(rows));
 }
-export async function resetDemo() { if ((await getConfig()).mode !== 'demo') throw new Error('Esta opción solo existe en la demostración.'); write(seed()); }
+export async function resetDemo() { if ((await getConfig()).mode !== 'demo') throw new Error('Esta opción solo existe en la demostración.'); write(seed()); localStorage.setItem(DEMO_VERSION,'1'); }
 
 export async function listPayments() { return (await getConfig()).mode==='cloud' ? api('payments') : JSON.parse(localStorage.getItem('iron_payments_demo')||'[]'); }
 export async function recordPayment(data) {
