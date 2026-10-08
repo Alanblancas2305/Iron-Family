@@ -1,15 +1,17 @@
-# IRON FAMILY
+# IRON PANTHERS
+
+**Para esta actualización empieza por EMPIEZA-AQUI.md.**
 
 Sitio completo con portal de socios y panel administrativo, preparado para Vercel.
 
-La carpeta `vistas-previas` incluye capturas del portal y administración en escritorio y celular.
+El proyecto incluye el portal público y el panel de recepción.
 
 ## Primero: verlo desde tu celular
 
 1. Descomprime `IRON-FAMILY-proyecto.zip`.
 2. Crea un repositorio en GitHub y sube **el contenido de la carpeta `iron-family`**. `package.json`, `index.html`, `api`, `src` y `public` deben estar en la raíz del repositorio. Incluye también `package-lock.json` y `vercel.json`.
 3. En [Vercel](https://vercel.com/new), elige **Add New → Project**, importa ese repositorio y pulsa **Deploy**. Vercel debe detectar **Vite**.
-4. Abre el enlace que entrega Vercel en tu celular. Administración está en el pie del sitio y en `/admin.html` (también `/admin`).
+4. Abre el enlace que entrega Vercel en tu celular. Administración se abre directamente en `/admin.html`; no tiene enlace público.
 
 Si solicita la configuración:
 
@@ -71,14 +73,14 @@ Las sesiones administrativas duran ocho horas, usan cookies HttpOnly y los inten
 ## Funciones incluidas
 
 - Identidad IRON FAMILY en portal y administración, con títulos desgastados inspirados en tu referencia.
-- Portada con pesa realista, movimiento suave, transiciones al desplazarte y compatibilidad con «reducir movimiento».
+- Portada con pantera, movimiento suave, transiciones al desplazarte y compatibilidad con «reducir movimiento».
 - Selección de Iron Gym o Iron Cross con vista ampliada de cada modalidad.
 - Malteadas de **chocolate, fresa, vainilla, galleta y capuchino**: chica **$25 MXN**, grande **$35 MXN**, con manzana o plátano.
 - Preentrenos **$35 MXN por preparación**: RYSE, Kaioken, Essential y Psychotic Xtreme. La disponibilidad de sabores se consulta en recepción.
 - Consulta de membresía con fecha de inicio, vencimiento, días restantes y estado.
 - Registro, búsqueda, filtros, edición, ficha, renovación y eliminación de socios.
 - Duraciones de 1, 3, 6 y 12 meses naturales. El último día indicado sigue vigente; se marca vencida al día siguiente. Fechas y estados usan el día de Ciudad de México.
-- Renovar abre un nuevo periodo desde la fecha elegida y sustituye el anterior; no mantiene historial de pagos o renovaciones. La pantalla lo informa antes de guardar.
+- Pagos y renovaciones mantiene un historial privado de cobros recibidos y actualiza la vigencia. Propone extender el periodo vigente sin perder días pendientes. No realiza cobros bancarios.
 - Logos discretos de Visa, Mastercard, Carnet, American Express y Mercado Pago. Son métodos aceptados **en recepción**; no hay cobro en línea ni pasarela integrada.
 - Fotografías y fuentes incluidas localmente para evitar depender de enlaces de imágenes al visitar el sitio.
 
@@ -90,9 +92,9 @@ Las sesiones administrativas duran ocho horas, usan cookies HttpOnly y los inten
 | Sabores, descripciones y contenido de las modalidades | `src/main.js` |
 | Colores, tamaños y animaciones | `src/style.css` |
 | Panel administrativo | `src/admin.js` y `src/admin.css` |
-| Pesa de bienvenida | `public/assets/hero.webp` |
+| Pesa de bienvenida | `public/assets/hero-panther.png` |
 | Fotos de Gym y Cross | `public/assets/gym.jpg` y `cross.jpg` |
-| Fotografía de coaches | `public/assets/coaches.webp` |
+| Fotografía de coaches | `public/assets/coaches-panthers.png` |
 | Imagen del carrusel de malteadas | `public/assets/shakes.webp` |
 
 La imagen de malteadas es una composición de cinco vasos, en el orden de sabores del carrusel. El código muestra cada quinto de la imagen y mantiene la proporción del vaso.

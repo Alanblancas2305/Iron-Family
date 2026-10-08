@@ -1,4 +1,4 @@
-import { addMonths, today, validateMember, normalizeName, validateComment } from './shared.js';
+import { addMonths, membership, today, validateMember, normalizeName, validateComment, validatePayment } from './shared.js';
 const KEY = 'iron_family_demo_v1';
 let config;
 export async function api(action, data, method = data ? 'POST' : 'GET') {
@@ -38,7 +38,7 @@ export async function saveMember(data) {
   if (data.id) {
     const index = rows.findIndex(r => r.id === Number(data.id));
     if (index < 0) throw new Error('Este socio ya no existe. Actualiza la lista.');
-    rows[index] = { ...rows[index], ...fields }; write(rows); return rows[index];
+    rows[index] = { ...rows[index], ...fields, paid_until: rows[index].start===fields.start && rows[index].months===fields.months ? rows[index].paid_until : null }; write(rows); return rows[index];
   }
   const member = { ...fields, id: Math.max(1000, ...rows.map(r => r.id)) + 1, access_code: crypto.randomUUID().replaceAll('-', '').slice(0, 12).toUpperCase() };
   rows.push(member); write(rows); return member;
@@ -51,8 +51,8 @@ export async function lookup(name) {
   const matches = read().filter(m => normalizeName(m.name) === normalizeName(name));
   if (!matches.length) throw new Error('No encontramos tu membresía. Escribe tu nombre completo como lo registraste en recepción.');
   if (matches.length > 1) throw new Error('Hay más de un registro con ese nombre. Acércate a recepción para identificar tu membresía.');
-  const {id, name: fullName, area, start, months} = matches[0];
-  return {id, name: fullName, area, start, months};
+  const {id, name: fullName, area, start, months, paid_until} = matches[0];
+  return {id, name: fullName, area, start, months, paid_until};
 }
 const COMMENTS_KEY = 'iron_family_comments_v1';
 function readComments() { return JSON.parse(localStorage.getItem(COMMENTS_KEY) || '[]'); }
@@ -72,3 +72,17 @@ export async function reviewComment(id) {
   localStorage.setItem(COMMENTS_KEY, JSON.stringify(rows));
 }
 export async function resetDemo() { if ((await getConfig()).mode !== 'demo') throw new Error('Esta opción solo existe en la demostración.'); write(seed()); }
+
+export async function listPayments() { return (await getConfig()).mode==='cloud' ? api('payments') : JSON.parse(localStorage.getItem('iron_payments_demo')||'[]'); }
+export async function recordPayment(data) {
+ const fields=validatePayment(data);
+ if((await getConfig()).mode==='cloud') return api('payments',fields);
+ const payments=await listPayments();
+ if(payments.some(p=>p.id===fields.id)) return payments.find(p=>p.id===fields.id);
+ const member=read().find(m=>m.id===fields.member_id);
+ if(!member) throw new Error('Este socio ya no existe.');
+ const rows=read(), index=rows.findIndex(x=>x.id===member.id);
+ rows[index]={...member,start:fields.start===membership(member).end?member.start:fields.start,months:fields.months,paid_until:addMonths(fields.start,fields.months)};write(rows);
+ const payment={...fields,member_name:member.name,created_at:new Date().toISOString()};
+ localStorage.setItem('iron_payments_demo',JSON.stringify([payment,...payments]));return payment;
+}

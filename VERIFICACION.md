@@ -1,13 +1,7 @@
-# Verificación de entrega
+# Verificación de la entrega
 
-- Compilación de producción: correcta (`npm run build`).
-- Pruebas automáticas: correctas (`npm test`), vencimientos, validación y API con datos simulados.
-- Revisión en Chromium a 320, 390, 768 y 1440 píxeles de ancho: sin desbordamiento horizontal y con imágenes cargadas.
-- Carrusel: cinco sabores, navegación por flechas/teclado y cambio de tamaño/precio verificados.
-- Modalidades: apertura y cierre con Escape verificados.
-- Membresía: consulta correcta y error de credenciales incorrectas verificados.
-- Administración: alta, edición, persistencia tras recarga, consulta del nuevo socio desde el portal, cancelación de borrado y borrado confirmado verificados.
-- Navegación móvil y lista de socios verificadas.
-- Fotografías y textos revisados visualmente.
-
-El despliegue en Vercel y la conexión a una cuenta real de Supabase quedan a cargo de la propietaria siguiendo LEEME.md. La conexión real no fue probada con credenciales externas.
+- Compilación de producción completada.
+- 8 pruebas automatizadas: membresías, validación, acceso privado, comentarios y pagos.
+- Prueba de navegador: pago, consulta pública de nueva vigencia, edición de edad sin perder renovación, envío y lectura de comentarios. Sin errores JavaScript ni desbordamiento horizontal en 1366, 1024 y 390 píxeles.
+- SQL ejecutado en PostgreSQL local (PGlite): instalación y migración repetible, renovación conserva días, reintento no duplica pago, error revierte operación, eliminación de socio conserva historial.
+- No se ha desplegado esta entrega ni probado contra tus credenciales reales de Supabase/Vercel. Ejecuta ACTUALIZACION-ADMIN.sql antes de publicar y comprueba el acceso y una consulta real después.

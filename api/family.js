@@ -1,5 +1,5 @@
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
-import { validateMember, validateComment } from '../src/shared.js';
+import { validateMember, validateComment, validatePayment } from '../src/shared.js';
 
 const ENV = ['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','ADMIN_USER','ADMIN_PASSWORD','SESSION_SECRET'];
 function configuration() {
@@ -80,6 +80,17 @@ export default async function handler(req,res) {
       return res.status(201).json({ok:true});
     }
     if(!authenticated(req))return res.status(401).json({error:'Inicia sesión para administrar los socios.'});
+    if(action==='payments') {
+      requireMethod(req,['GET','POST']);
+      if(req.method==='GET') {
+        let rows=[],offset=0;
+        while(true){const page=await db(`iron_payments?select=*&order=created_at.desc&limit=500&offset=${offset}`);rows.push(...page);if(page.length<500)break;offset+=500;}
+        return res.status(200).json(rows);
+      }
+      let fields;try { fields=validatePayment(body); } catch(e) { return res.status(400).json({error:e.message}); }
+      const result=await db('rpc/iron_record_payment',{method:'POST',body:{p_id:fields.id,p_member:fields.member_id,p_amount:fields.amount,p_method:fields.method,p_start:fields.start,p_months:fields.months}});
+      return res.status(200).json(result);
+    }
     if(action==='comments') {
       requireMethod(req,['GET','PATCH']);
       if(req.method==='GET') {
@@ -110,6 +121,8 @@ export default async function handler(req,res) {
     let result;
     if(req.method==='PATCH'){
       if(!validId(body.id))return res.status(400).json({error:'Número de socio inválido.'});
+      const previous=await db('iron_members?id=eq.'+Number(body.id)+'&select=start,months,paid_until');
+      if(previous?.length) member.paid_until=previous[0].start===member.start && previous[0].months===member.months ? previous[0].paid_until : null;
       result=await db('iron_members?id=eq.'+Number(body.id),{method:'PATCH',body:member});
       if(!result?.length)return res.status(404).json({error:'Este socio ya no existe.'});
     }else result=await db('iron_members',{method:'POST',body:{...member,access_code:randomBytes(10).toString('hex').toUpperCase()}});

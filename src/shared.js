@@ -8,7 +8,7 @@ export function addMonths(start, months) {
 }
 export const daysBetween = (from, to) => Math.round((Date.parse(to + 'T00:00:00Z') - Date.parse(from + 'T00:00:00Z')) / 86400000);
 export function membership(m, on = today()) {
-  const end = addMonths(m.start, m.months), days = daysBetween(on, end), pending = on < m.start;
+  const end = m.paid_until || addMonths(m.start, m.months), days = daysBetween(on, end), pending = on < m.start;
   const state = pending ? 'pending' : days < 0 ? 'expired' : days <= 7 ? 'soon' : 'active';
   return { end, days, state, label: { pending: 'Por iniciar', expired: 'Vencida', soon: 'Por vencer', active: 'Activa' }[state], progress: pending ? 100 : Math.max(0, Math.min(100, days / daysBetween(m.start, end) * 100)) };
 }
@@ -35,4 +35,15 @@ export function validateComment(data) {
   if (typeof data.message !== 'string' || data.message.trim().length < 10 || data.message.length > 2000) throw new Error('Escribe un comentario de 10 a 2000 caracteres.');
   if (typeof data.name !== 'string' || data.name.length > 100) throw new Error('El nombre debe tener hasta 100 caracteres.');
   return {name: data.name.trim(), message: data.message.trim()};
+}
+
+export function validatePayment(data) {
+ const id=String(data.id||'');
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) throw new Error('Identificador de pago inválido.');
+ const member_id=Number(data.member_id), amount=Number(data.amount), months=Number(data.months), start=String(data.start||''), method=data.method;
+ if(!Number.isSafeInteger(member_id)||member_id<=0) throw new Error('Selecciona un socio.');
+ if(!Number.isFinite(amount)||amount<=0||amount>1000000||Math.abs(amount*100-Math.round(amount*100))>0.00001) throw new Error('Escribe un importe válido con hasta dos decimales.');
+ validateMember({name:'Validación',age:18,area:'gym',start,months});
+ if(!['Efectivo','Tarjeta','Transferencia'].includes(method)) throw new Error('Selecciona la forma de pago.');
+ return {id,member_id,amount,method,start,months};
 }
