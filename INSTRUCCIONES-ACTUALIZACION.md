@@ -1,64 +1,62 @@
-# IRON PANTHERS · Actualización móvil
+# Actualización visual de recepción
 
-ZIP con los archivos nuevos o modificados para colocarlos en la raíz de `iron-family`. Conserva las imágenes de la pantera, coaches y productos que ya tienes.
+Esta versión incorpora un Inicio pensado para permanecer abierto en el monitor del gimnasio:
 
-Incluye: fondo negro; títulos grandes en celular; horarios separados; SVG sin emojis; consulta por nombre; buzón privado con bandeja en Administración; pagos debajo de coaches.
+- Botón destacado «Registrar miembro» en Inicio y navegación.
+- Contadores de miembros registrados, membresías vigentes, por vencer y vencidas.
+- Dos listas independientes: por vencer en los próximos 7 días (incluye hoy) y vencidas.
+- Nombre, modalidad, fecha de vencimiento y tiempo restante o transcurrido.
+- Acceso a la ficha y botón Renovar que abre el pago del miembro seleccionado.
+- Actualización del tablero cada minuto mientras está visible, sin cerrar formularios abiertos; también hay botón Actualizar.
+- Listas con desplazamiento interno para mantener visibles los controles.
+- Uso de «miembros» en las pantallas y mensajes.
+- Formulario con secciones destacadas y botón de registro más grande.
+- En móvil, halo completo detrás de la pantera, sin arco delantero cortado sobre el brazo. En escritorio se conserva el efecto original.
 
-Horarios confirmados: lunes a viernes de 7–11 am y 5–9:30 pm; sábado de 7–11 am.
+## Instalar sobre tu proyecto actual
 
-## Instalar en tu Mac
+Copia el contenido de la carpeta iron-family de este ZIP dentro de tu carpeta original iron-family y acepta reemplazar los archivos. Conserva .git, .env*, .npmrc y .vercel. No pongas una carpeta iron-family dentro de otra.
 
-Descarga IRON-PANTHERS-movil.zip en Descargas. En Terminal entra a la carpeta `iron-family` donde ejecutas Git. Primero revisa los cambios pendientes:
-
-```bash
-git status
-```
-
-Si tienes cambios propios sin guardar, guárdalos antes:
-
-```bash
-git add .
-git commit -m "Respalda cambios antes de actualizar diseño movil"
-```
-
-Después, dentro de `iron-family`:
+En Terminal, dentro de tu proyecto:
 
 ```bash
-unzip -o "$HOME/Downloads/IRON-PANTHERS-movil.zip" -d .
 npm ci
 npm test
 npm run build
 ```
 
-Si Safari lo descomprime automáticamente, copia el contenido a `iron-family`, combinando las carpetas `src`, `api` y `tests` y reemplazando solo los archivos correspondientes. No borres las carpetas completas.
+Para revisarlo en tu Mac:
 
-## Activar funciones en línea
+```bash
+npm run dev
+```
 
-Si ya usas Supabase, abre SQL Editor y ejecuta **ACTUALIZACION-MOVIL.sql** antes del push. Agrega la consulta por nombre y la tabla de comentarios; no elimina socios.
+Abre la dirección que muestre Terminal y agrega /admin.html. Mantén Terminal abierta durante la demostración. Sin variables configuradas se ofrece «Explorar administración». Una configuración parcial seguirá mostrando un error: esta actualización visual no cambia tus variables de Vercel o Supabase.
 
-Si todavía no tienes datos en línea, sigue «Activar membresías en línea» en LEEME.md con el database.sql actualizado. Requiere SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ADMIN_USER, ADMIN_PASSWORD y SESSION_SECRET en Vercel.
+Usa información ficticia en demostración. Administración y consulta deben usarse en el mismo navegador y dirección; la demostración no comparte datos entre dispositivos.
 
-**Sin esa configuración, sigue en demostración:** socios y comentarios se guardan solo en el mismo navegador. El formulario lo indica. No aparecen en otro celular.
-
-## Publicar
+Para publicar, después de comprobar el resultado:
 
 ```bash
 git add .
-git commit -m "Mejora movil, horarios, consulta por nombre y buzon"
+git commit -m "Mejora recepcion, miembros y portada movil"
 git push origin main
 ```
 
-Si Vercel está conectado a esa rama, espera a que el despliegue termine y recarga la página en el celular.
+Espera Ready en Vercel y abre /admin.html.
 
-## Comprobar
+## Base de datos
 
-- Menú → Horarios: revisa los dos turnos.
-- Mi membresía: escribe el nombre completo registrado. Acepta distintas mayúsculas y sin acentos; no pide código.
-- Si dos registros tienen el mismo nombre completo, pide acudir a recepción para evitar mostrar la membresía equivocada.
-- Envía un comentario y abre Administración → Comentarios. Puedes marcarlo como leído.
-- En modo en línea, verifica el comentario desde otro dispositivo. En demostración, usa el mismo navegador.
-- Los métodos de pago aparecen inmediatamente después del bloque de coaches.
+Si ya ejecutaste ACTUALIZACION-ADMIN.sql para el historial de pagos, no tienes que ejecutar más SQL por estos cambios visuales. Se conservan el modelo de datos y los pagos. Para una instalación desde cero, consulta LEEME.md.
 
-La vigencia muestra días totales y su equivalente en meses y días de calendario. La consulta pública por nombre devuelve nombre, modalidad, número y fechas de membresía; no devuelve edad ni códigos. Los comentarios solo pueden leerse con sesión administrativa en modo en línea.
+Registrar pagos solo registra cobros recibidos; no realiza cargos bancarios.
 
-No se ha hecho push ni cambiado tu Vercel/Supabase desde este paquete.
+## Archivos modificados en esta revisión
+
+- src/admin.js y src/admin.css
+- src/mobile.css
+- index.html y src/main.js
+- src/data.js, src/shared.js y api/family.js (terminología visible)
+- EMPIEZA-AQUI.md, INSTRUCCIONES-ACTUALIZACION.md y VERIFICACION.md
+
+No se incluyen dependencias descargadas, credenciales ni datos personales.

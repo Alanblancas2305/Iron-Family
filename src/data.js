@@ -37,7 +37,7 @@ export async function saveMember(data) {
   const rows = read();
   if (data.id) {
     const index = rows.findIndex(r => r.id === Number(data.id));
-    if (index < 0) throw new Error('Este socio ya no existe. Actualiza la lista.');
+    if (index < 0) throw new Error('Este miembro ya no existe. Actualiza la lista.');
     rows[index] = { ...rows[index], ...fields, paid_until: rows[index].start===fields.start && rows[index].months===fields.months ? rows[index].paid_until : null }; write(rows); return rows[index];
   }
   const member = { ...fields, id: Math.max(1000, ...rows.map(r => r.id)) + 1, access_code: crypto.randomUUID().replaceAll('-', '').slice(0, 12).toUpperCase() };
@@ -80,7 +80,7 @@ export async function recordPayment(data) {
  const payments=await listPayments();
  if(payments.some(p=>p.id===fields.id)) return payments.find(p=>p.id===fields.id);
  const member=read().find(m=>m.id===fields.member_id);
- if(!member) throw new Error('Este socio ya no existe.');
+ if(!member) throw new Error('Este miembro ya no existe.');
  const rows=read(), index=rows.findIndex(x=>x.id===member.id);
  rows[index]={...member,start:fields.start===membership(member).end?member.start:fields.start,months:fields.months,paid_until:addMonths(fields.start,fields.months)};write(rows);
  const payment={...fields,member_name:member.name,created_at:new Date().toISOString()};

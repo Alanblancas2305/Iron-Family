@@ -79,7 +79,7 @@ export default async function handler(req,res) {
       await db('iron_comments',{method:'POST',body:fields});
       return res.status(201).json({ok:true});
     }
-    if(!authenticated(req))return res.status(401).json({error:'Inicia sesión para administrar los socios.'});
+    if(!authenticated(req))return res.status(401).json({error:'Inicia sesión para administrar los miembros.'});
     if(action==='payments') {
       requireMethod(req,['GET','POST']);
       if(req.method==='GET') {
@@ -112,19 +112,19 @@ export default async function handler(req,res) {
       return res.status(200).json(rows);
     }
     if(req.method==='DELETE'){
-      if(!validId(body.id))return res.status(400).json({error:'Número de socio inválido.'});
+      if(!validId(body.id))return res.status(400).json({error:'Número de miembro inválido.'});
       const result=await db('iron_members?id=eq.'+Number(body.id),{method:'DELETE'});
-      if(!result?.length)return res.status(404).json({error:'Este socio ya no existe.'});
+      if(!result?.length)return res.status(404).json({error:'Este miembro ya no existe.'});
       return res.status(200).json({ok:true});
     }
     let member;try{member=validateMember(body);}catch(e){return res.status(400).json({error:e.message});}
     let result;
     if(req.method==='PATCH'){
-      if(!validId(body.id))return res.status(400).json({error:'Número de socio inválido.'});
+      if(!validId(body.id))return res.status(400).json({error:'Número de miembro inválido.'});
       const previous=await db('iron_members?id=eq.'+Number(body.id)+'&select=start,months,paid_until');
       if(previous?.length) member.paid_until=previous[0].start===member.start && previous[0].months===member.months ? previous[0].paid_until : null;
       result=await db('iron_members?id=eq.'+Number(body.id),{method:'PATCH',body:member});
-      if(!result?.length)return res.status(404).json({error:'Este socio ya no existe.'});
+      if(!result?.length)return res.status(404).json({error:'Este miembro ya no existe.'});
     }else result=await db('iron_members',{method:'POST',body:{...member,access_code:randomBytes(10).toString('hex').toUpperCase()}});
     return res.status(req.method==='POST'?201:200).json(result[0]);
   }catch(error){return res.status(error.status||500).json({error:error.status?error.message:'No se pudo completar la solicitud. Inténtalo de nuevo.'});}

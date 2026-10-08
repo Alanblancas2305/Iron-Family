@@ -21,3 +21,11 @@
 }
 @media(max-width:360px){.site-header .brand small{display:none}.site-header .brand{font-size:11px}.site-header .brand-logo{width:32px;height:32px}.header-actions .button{font-size:9px;padding-inline:7px}.site-header{padding-inline:10px}.section-heading h2,.membership-section h2{font-size:34px}.modality-caption>.rough{font-size:37px}.panther-title{font-size:15.7vw}.comment-meta{font-size:10px}.membership-box{padding:25px 20px}}
 @media(prefers-reduced-motion:reduce){.panther-story{height:auto}.panther-stage{position:relative;top:auto}}
+
+/* Mobile: a complete halo behind the athlete, never a cut arc on the arm. */
+@media(max-width:800px){
+ .panther-ring-front{display:none}
+ .panther-ring-back{z-index:1;clip-path:none;left:7%;width:86%;top:290px;height:270px;border-width:2px;transform:translateY(calc(var(--travel)*-22px)) rotate(-18deg);opacity:.8}
+ .panther-athlete{left:3%;width:94%}
+}
+@media(prefers-reduced-motion:reduce) and (max-width:800px){.panther-ring-back{transform:rotate(-18deg)}}

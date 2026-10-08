@@ -1,52 +1,62 @@
-# IRON PANTHERS · Proyecto completo
+# Actualización visual de recepción
 
-Un solo proyecto para Windows y Mac. El ZIP se publica una vez; recepción abre el panel en su navegador. Necesita internet para compartir registros.
+Esta versión incorpora un Inicio pensado para permanecer abierto en el monitor del gimnasio:
 
-- Clientes: https://iron-family.vercel.app/
-- Administración: https://iron-family.vercel.app/admin.html
+- Botón destacado «Registrar miembro» en Inicio y navegación.
+- Contadores de miembros registrados, membresías vigentes, por vencer y vencidas.
+- Dos listas independientes: por vencer en los próximos 7 días (incluye hoy) y vencidas.
+- Nombre, modalidad, fecha de vencimiento y tiempo restante o transcurrido.
+- Acceso a la ficha y botón Renovar que abre el pago del miembro seleccionado.
+- Actualización del tablero cada minuto mientras está visible, sin cerrar formularios abiertos; también hay botón Actualizar.
+- Listas con desplazamiento interno para mantener visibles los controles.
+- Uso de «miembros» en las pantallas y mensajes.
+- Formulario con secciones destacadas y botón de registro más grande.
+- En móvil, halo completo detrás de la pantera, sin arco delantero cortado sobre el brazo. En escritorio se conserva el efecto original.
 
-## Actualizar el sitio que ya tienes
+## Instalar sobre tu proyecto actual
 
-1. Haz una copia de tu carpeta actual `iron-family`.
-2. Descomprime este ZIP. Copia TODO el contenido de su carpeta `iron-family` dentro de tu proyecto actual y acepta reemplazar archivos. Conserva tu carpeta `.git` y tus archivos de configuración privada. No copies la carpeta dentro de sí misma.
-3. Abre `ACTUALIZACION-ADMIN.sql`, copia todo su contenido, pégalo en el SQL Editor de TU proyecto Supabase y pulsa Run. Este paso agrega el historial de pagos y conserva socios y comentarios. En Mac, desde tu carpeta del proyecto, puedes copiarlo con `pbcopy < ACTUALIZACION-ADMIN.sql`. No necesitas volver a ejecutar el SQL móvil.
-4. En Terminal, dentro de tu carpeta del proyecto, ejecuta:
+Copia el contenido de la carpeta iron-family de este ZIP dentro de tu carpeta original iron-family y acepta reemplazar los archivos. Conserva .git, .env*, .npmrc y .vercel. No pongas una carpeta iron-family dentro de otra.
+
+En Terminal, dentro de tu proyecto:
 
 ```bash
 npm ci
 npm test
 npm run build
+```
+
+Para revisarlo en tu Mac:
+
+```bash
+npm run dev
+```
+
+Abre la dirección que muestre Terminal y agrega /admin.html. Mantén Terminal abierta durante la demostración. Sin variables configuradas se ofrece «Explorar administración». Una configuración parcial seguirá mostrando un error: esta actualización visual no cambia tus variables de Vercel o Supabase.
+
+Usa información ficticia en demostración. Administración y consulta deben usarse en el mismo navegador y dirección; la demostración no comparte datos entre dispositivos.
+
+Para publicar, después de comprobar el resultado:
+
+```bash
 git add .
-git commit -m "Organiza recepcion y agrega pagos y renovaciones"
+git commit -m "Mejora recepcion, miembros y portada movil"
 git push origin main
 ```
 
-5. Espera a que el nuevo despliegue de Vercel diga Ready. Las cinco variables que ya configuraste se conservan; no tienes que crear otro usuario ni otro proyecto.
-6. Abre `/admin.html` e inicia sesión. Si muestra un error de conexión, verifica las variables indicadas en LEEME.md. El ZIP no configura ni verifica por sí mismo tu cuenta de Vercel o Supabase.
+Espera Ready en Vercel y abre /admin.html.
 
-## Uso diario
+## Base de datos
 
-- **Inicio:** membresías vigentes, próximas a vencer y comentarios nuevos.
-- **Socios:** buscar, filtrar por modalidad o estado, registrar y editar. La ficha permite copiar el acceso del socio.
-- **Pagos y renovaciones:** selecciona el socio, importe recibido, forma de pago, inicio y duración. Guarda el pago y la vigencia juntos. No hace cargos a tarjetas; registra cobros que ya recibiste. No incluye facturación fiscal ni cancelación de pagos.
-- Si aún quedan días, la fecha propuesta prolonga la vigencia actual. Revisa el nuevo vencimiento antes de guardar. Los periodos incluyen la fecha final. Al cambiar manualmente la fecha puedes sustituir el periodo actual.
-- **Comentarios:** mensajes privados enviados por clientes; permite marcarlos como leídos. El buzón se actualiza cada minuto cuando está abierto y también tiene botón Actualizar.
-- **Ayuda y conexión:** indica si estás en línea o en demostración.
+Si ya ejecutaste ACTUALIZACION-ADMIN.sql para el historial de pagos, no tienes que ejecutar más SQL por estos cambios visuales. Se conservan el modelo de datos y los pagos. Para una instalación desde cero, consulta LEEME.md.
 
-Al renovar, el cliente ve el nuevo tiempo restante al volver a consultar su nombre en la página pública. No se envían notificaciones ni WhatsApp automáticamente. Los mensajes enviados mientras recepción está cerrada quedan guardados en Supabase.
+Registrar pagos solo registra cobros recibidos; no realiza cargos bancarios.
 
-Editar inicio o duración desde la ficha sustituye la vigencia pagada. Usa Pagos y renovaciones para sumar tiempo y conservar el registro del cobro. Eliminar un socio no elimina su historial de pagos.
+## Archivos modificados en esta revisión
 
-## Acceso directo: Windows y Mac
+- src/admin.js y src/admin.css
+- src/mobile.css
+- index.html y src/main.js
+- src/data.js, src/shared.js y api/family.js (terminología visible)
+- EMPIEZA-AQUI.md, INSTRUCCIONES-ACTUALIZACION.md y VERIFICACION.md
 
-Incluimos `accesos/Administracion-Windows.url` para Windows y `accesos/Administracion-Mac.webloc` para Mac. Copia el correspondiente al escritorio y ábrelo con doble clic. Ambos abren el mismo panel publicado. No contienen contraseñas.
-
-También puedes guardar el enlace de administración en Favoritos del navegador. El panel no aparece enlazado en la página pública. Quien tenga el enlace y las credenciales podrá entrar desde otro equipo, como acordamos. La sesión dura ocho horas y hay botón Salir.
-
-## Si empiezas desde cero
-
-Sigue LEEME.md y ejecuta `database.sql` completo en lugar de la actualización. No subas contraseñas ni claves privadas a GitHub. No abras los HTML con doble clic: usa el sitio publicado o `npm run dev` para desarrollo.
-
-## Qué se incluye
-
-Código completo, imágenes, fuentes, API, SQL, pruebas e instrucciones. No se incluyen dependencias descargadas, credenciales ni datos personales. No necesitas un ZIP distinto para cada sistema operativo.
+No se incluyen dependencias descargadas, credenciales ni datos personales.

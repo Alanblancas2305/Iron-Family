@@ -41,7 +41,7 @@ export function validatePayment(data) {
  const id=String(data.id||'');
  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) throw new Error('Identificador de pago inválido.');
  const member_id=Number(data.member_id), amount=Number(data.amount), months=Number(data.months), start=String(data.start||''), method=data.method;
- if(!Number.isSafeInteger(member_id)||member_id<=0) throw new Error('Selecciona un socio.');
+ if(!Number.isSafeInteger(member_id)||member_id<=0) throw new Error('Selecciona un miembro.');
  if(!Number.isFinite(amount)||amount<=0||amount>1000000||Math.abs(amount*100-Math.round(amount*100))>0.00001) throw new Error('Escribe un importe válido con hasta dos decimales.');
  validateMember({name:'Validación',age:18,area:'gym',start,months});
  if(!['Efectivo','Tarjeta','Transferencia'].includes(method)) throw new Error('Selecciona la forma de pago.');
