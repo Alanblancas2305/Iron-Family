@@ -5,8 +5,17 @@ const ENV = ['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','ADMIN_USER','ADMIN_PASS
 function configuration() {
   const count = ENV.filter(k => process.env[k]).length;
   if (!count) return 'demo';
-  if (count !== ENV.length || !/^https:\/\//.test(process.env.SUPABASE_URL) || process.env.ADMIN_PASSWORD.length < 12 || process.env.SESSION_SECRET.length < 32) {
-    const error = new Error('La conexión está incompleta. Revisa las cinco variables indicadas en LEEME.md.'); error.status = 503; throw error;
+  const missing = ENV.filter(k => !process.env[k]);
+  const invalid = [];
+  if (process.env.SUPABASE_URL && !/^https:\/\//.test(process.env.SUPABASE_URL)) invalid.push('SUPABASE_URL (debe comenzar con https://)');
+  if (process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD.length < 12) invalid.push('ADMIN_PASSWORD (mínimo 12 caracteres)');
+  if (process.env.SESSION_SECRET && process.env.SESSION_SECRET.length < 32) invalid.push('SESSION_SECRET (mínimo 32 caracteres)');
+  if (missing.length || invalid.length) {
+    const details = [
+      ...(missing.length ? [`faltan: ${missing.join(', ')}`] : []),
+      ...(invalid.length ? [`revisar: ${invalid.join(', ')}`] : []),
+    ].join('; ');
+    const error = new Error(`Configuración incompleta en el servidor (${details}). Revisa las variables de entorno de Vercel.`); error.status = 503; throw error;
   }
   return 'cloud';
 }

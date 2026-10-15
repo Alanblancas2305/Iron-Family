@@ -18,7 +18,12 @@ test('API: aislamiento, sesión, validación, CRUD y consulta mínima',async()=>
   };
   try{
     env(false);assert.equal((await call('config')).body.mode,'demo');
-    process.env.SUPABASE_URL='https://example.supabase.co';assert.equal((await call('config')).code,503);
+    process.env.SUPABASE_URL='https://example.supabase.co';
+    const incomplete=await call('config');assert.equal(incomplete.code,503);
+    assert.match(incomplete.body.error,/faltan: SUPABASE_SERVICE_ROLE_KEY/);
+    env();process.env.ADMIN_PASSWORD='too-short';
+    const invalid=await call('config');assert.equal(invalid.code,503);
+    assert.match(invalid.body.error,/ADMIN_PASSWORD \(mínimo 12 caracteres\)/);
     env();assert.equal((await call('config')).body.mode,'cloud');
     assert.equal((await call('members')).code,401);
     assert.equal((await call('login',{method:'POST',body:{user:'test-admin',password:'bad'}})).code,401);
