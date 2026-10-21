@@ -14,3 +14,139 @@
 
 .brand-logo{width:54px;height:54px;object-fit:cover;border-radius:50%;flex:none;box-shadow:0 0 0 1px #ffffff30}
 @media(max-width:800px){.brand-logo{width:46px;height:46px}}
+/* INSTALACIONES REALES — IRON PANTHERS */
+
+#modalidades .section-heading h2 {
+  font-size: clamp(32px, 4.2vw, 60px);
+  overflow-wrap: anywhere;
+}
+
+#modalidades [data-gallery="gym"] > img {
+  filter: none;
+}
+
+#gallery-dialog {
+  width: min(1240px, 94vw);
+  max-width: 94vw;
+  max-height: 90vh;
+  max-height: 90dvh;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #151515;
+  border: 1px solid #383838;
+}
+
+#gallery-dialog[open] {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 0;
+}
+
+#gallery-dialog .dialog-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  width: 44px;
+  height: 44px;
+  background: #151515;
+  color: #fff;
+  border: 1px solid #777;
+}
+
+#gallery-dialog .dialog-close:hover {
+  background: var(--red);
+  border-color: var(--red);
+}
+
+#gallery-dialog .installation-collage {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 12px;
+  min-width: 0;
+  padding: 22px;
+  background: #0b0b0b;
+}
+
+#gallery-dialog .installation-photo {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #191919;
+}
+
+/* La principal ocupa todo el ancho de la galería. */
+#gallery-dialog .installation-photo--main {
+  grid-column: 1 / -1;
+  border-color: #a33c31;
+}
+
+/* Se muestra cada fotografía completa, sin recortarla. */
+#gallery-dialog .installation-photo img {
+  display: block;
+  position: static;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  object-fit: contain;
+  filter: none;
+  transform: none;
+}
+
+#gallery-dialog .installation-collage--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#gallery-dialog .gallery-details {
+  min-width: 0;
+  padding: 76px 30px 36px;
+}
+
+#gallery-dialog .gallery-details h2 {
+  font-size: clamp(36px, 4vw, 54px);
+}
+
+#gallery-dialog .gallery-details .eyebrow {
+  line-height: 1.6;
+}
+
+#gallery-dialog .gallery-details .button {
+  width: 100%;
+}
+
+@media (max-width: 800px) {
+  #gallery-dialog[open] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #gallery-dialog .installation-collage {
+    gap: 10px;
+    padding: 68px 16px 16px;
+  }
+
+  #gallery-dialog .gallery-details {
+    padding: 24px 24px 32px;
+  }
+}
+
+@media (max-width: 520px) {
+  #gallery-dialog .installation-collage {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding-inline: 12px;
+  }
+
+  #gallery-dialog .installation-collage--single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #gallery-dialog .gallery-details {
+    padding: 22px 20px 28px;
+  }
+}
