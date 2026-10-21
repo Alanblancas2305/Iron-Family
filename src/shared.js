@@ -12,6 +12,12 @@ export function membership(m, on = today()) {
   const state = pending ? 'pending' : days < 0 ? 'expired' : days <= 7 ? 'soon' : 'active';
   return { end, days, state, label: { pending: 'Por iniciar', expired: 'Vencida', soon: 'Por vencer', active: 'Activa' }[state], progress: pending ? 100 : Math.max(0, Math.min(100, days / daysBetween(m.start, end) * 100)) };
 }
+export function paymentPeriod(member, payments, on = today()) {
+  const hasPayment = payments.some(p => Number(p.member_id) === Number(member.id));
+  if (!hasPayment) return { start: member.start, months: Number(member.months) };
+  const end = membership(member, on).end;
+  return { start: end > on ? end : on, months: 1 };
+}
 export const dateLabel = s => new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(s + 'T12:00:00Z'));
 export const escapeHTML = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export function validateMember(m) {

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {membership,validatePayment,addMonths,today} from '../src/shared.js';
+import {membership,validatePayment,addMonths,today,paymentPeriod} from '../src/shared.js';
 import {createHmac} from 'node:crypto';
 import handler from '../api/family.js';
 test('renovar conserva vigencia actual y valida importes',()=>{
@@ -12,6 +12,11 @@ test('renovar conserva vigencia actual y valida importes',()=>{
  assert.equal(validatePayment(valid).amount,500.5);
  for(const amount of [0,-5,1.005,'oops',1000001])assert.throws(()=>validatePayment({...valid,amount}));
  assert.throws(()=>validatePayment({...valid,start:'2026-02-30'}));
+});
+test('el primer pago documenta el periodo del alta y las renovaciones empiezan al vencer',()=>{
+ const member={id:42,start:'2026-10-20',months:1};
+ assert.deepEqual(paymentPeriod(member,[],'2026-10-20'),{start:'2026-10-20',months:1});
+ assert.deepEqual(paymentPeriod(member,[{member_id:42,start:'2026-10-20',months:1}],'2026-10-20'),{start:'2026-11-20',months:1});
 });
 test('pagos privados: exige sesión y usa una operación transaccional',async()=>{
  const keys=['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','ADMIN_USER','ADMIN_PASSWORD','SESSION_SECRET'];
