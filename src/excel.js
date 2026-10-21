@@ -195,7 +195,7 @@ export function createRegisterWorkbook(members, payments, comments) {
       '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>',
     'xl/workbook.xml':
       `<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-        <sheets>${sheets.map(([name], index =>
+        <sheets>${sheets.map(([name], index) =>
           `<sheet name="${name}" sheetId="${index + 1}" r:id="rId${index + 1}"/>`
         ).join('')}</sheets>
       </workbook>`,
