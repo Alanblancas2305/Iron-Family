@@ -43,10 +43,93 @@ function initials(name) { return name.trim().split(/\s+/).slice(0,2).map(x=>x[0]
 function filtered() { const q = query.toLocaleLowerCase('es-MX').normalize('NFD').replace(/[\u0300-\u036f]/g,''); return members.filter(m => (areaFilter==='all'||m.area===areaFilter) && (filter==='all' || (filter==='current' && ['active','soon'].includes(membership(m).state)) || membership(m).state===filter) && (!q || (m.name.toLocaleLowerCase('es-MX').normalize('NFD').replace(/[\u0300-\u036f]/g,'')+' '+m.id).includes(q))); }
 function rows() {
   const list = filtered();
-  if (!list.length) return `<div class="empty"><span>◎</span><h3>${members.length ? 'Sin coincidencias' : 'Tu familia empieza aquí'}</h3><p>${members.length ? 'Prueba otro nombre, número o filtro.' : 'Registra al primer miembro para comenzar.'}</p>${!members.length ? '<button class="button" data-create>Registrar miembro</button>' : ''}</div>`;
-  return `<div class="table-scroll"><table><thead><tr><th>Miembro</th><th>Modalidad</th><th>Vencimiento</th><th>Estado</th><th><span class="sr-only">Acciones</span></th></tr></thead><tbody>${list.map(m=>`<tr><td><div class="table-person"><div><strong>${esc(m.name)}</strong><small>#${m.id} · ${m.age} años</small></div></div></td><td data-label="Modalidad"><span class="area-label ${m.area}">${areaName(m.area)}</span></td><td data-label="Vencimiento">${dateLabel(membership(m).end)}<small>${membership(m).days<0?'Vencida':membership(m).days+' días restantes'}</small></td><td data-label="Estado">${badge(m)}</td><td><div class="row-actions"><button data-view="${m.id}" aria-label="Abrir ficha de ${esc(m.name)}">Abrir ficha</button></div></td></tr>`).join('')}</tbody></table></div><div class="table-bottom">${list.length} de ${members.length} miembros</div>`;
+
+  if (!list.length) {
+    return `<div class="empty">
+      <span>◎</span>
+      <h3>${members.length ? 'Sin coincidencias' : 'Tu familia empieza aquí'}</h3>
+      <p>${members.length ? 'Prueba otro nombre, número o filtro.' : 'Registra al primer miembro para comenzar.'}</p>
+      ${!members.length ? '<button class="button" data-create>Registrar miembro</button>' : ''}
+    </div>`;
+  }
+
+  return `<div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Miembro</th>
+          <th>Modalidad</th>
+          <th>Vencimiento</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${list.map(m => `<tr>
+          <td>
+            <div class="table-person">
+              <div>
+                <button class="member-name-button" data-view="${m.id}" aria-label="Ver ficha de ${esc(m.name)}">
+                  <strong>${esc(m.name)}</strong>
+                </button>
+                <small>No. ${m.id} · Edad: ${m.age} años</small>
+              </div>
+            </div>
+          </td>
+          <td data-label="Modalidad"><span class="area-label ${m.area}">${areaName(m.area)}</span></td>
+          <td data-label="Vencimiento">
+            ${dateLabel(membership(m).end)}
+            <small>${membership(m).days < 0 ? 'Vencida' : membership(m).days + ' días restantes'}</small>
+          </td>
+          <td data-label="Estado">${badge(m)}</td>
+          <td data-label="Acciones">
+            <div class="row-actions">
+              <button data-edit="${m.id}" aria-label="Editar a ${esc(m.name)}">Editar</button>
+              <button class="delete-action" data-delete="${m.id}" aria-label="Eliminar a ${esc(m.name)}">Eliminar</button>
+            </div>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="table-bottom">${list.length} de ${members.length} miembros</div>`;
 }
-function clients() { return `<div class="admin-title"><div><p class="eyebrow">RECEPCIÓN</p><h1>Miembros</h1><p>Busca un nombre o combina modalidad y vigencia.</p></div><button class="button export-register" id="export-register">Descargar Excel completo</button></div><p class="export-help">El Excel incluye todos los miembros, pagos y comentarios, aunque tengas filtros seleccionados.</p><section class="admin-card client-list"><div class="list-toolbar"><label class="search-label" for="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Buscar por nombre o número" value="${esc(query)}"></label><button class="button secondary" id="refresh">Actualizar lista</button></div><div class="member-filters"><fieldset><legend>1. Modalidad</legend><div>${[['all','Todas'],['gym','Iron Gym'],['cf','Iron Cross']].map(([key,label])=>`<button data-area-choice="${key}" aria-pressed="${areaFilter===key}">${label}</button>`).join('')}</div></fieldset><fieldset><legend>2. Vigencia</legend><div>${[['all','Todas'],['current','Vigentes'],['soon','Por vencer'],['expired','Vencidas']].map(([key,label])=>`<button data-filter="${key}" aria-pressed="${filter===key}">${label}</button>`).join('')}</div></fieldset><p>Vigentes incluye las membresías que están por vencer en los próximos 7 días.</p></div><div id="members-table" aria-live="polite">${rows()}</div></section>`; }
+function clients() {
+  return `<div class="admin-title">
+    <div>
+      <p class="eyebrow">RECEPCIÓN</p>
+      <h1>Miembros</h1>
+      <p>Busca, filtra y administra los registros de cada miembro.</p>
+    </div>
+    <button class="button export-register" id="export-register">Descargar Excel completo</button>
+  </div>
+  <p class="export-help">El Excel incluye todos los miembros, pagos y comentarios, aunque tengas filtros seleccionados.</p>
+  <section class="admin-card client-list">
+    <div class="list-toolbar">
+      <label class="search-label" for="search">
+        <span aria-hidden="true">⌕</span>
+        <input id="search" type="search" placeholder="Buscar por nombre o número" value="${esc(query)}">
+      </label>
+      <button class="button secondary" id="refresh">Actualizar lista</button>
+    </div>
+    <div class="member-filters">
+      <fieldset>
+        <legend>Modalidad</legend>
+        <div>${[['all','Todas'],['gym','Iron Gym'],['cf','Iron Cross']]
+          .map(([key,label]) => `<button data-area-choice="${key}" aria-pressed="${areaFilter === key}">${label}</button>`).join('')}
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Vigencia</legend>
+        <div>${[['all','Todas'],['current','Vigentes'],['soon','Por vencer'],['expired','Vencidas']]
+          .map(([key,label]) => `<button data-filter="${key}" aria-pressed="${filter === key}">${label}</button>`).join('')}
+        </div>
+      </fieldset>
+      <p>“Vigentes” también incluye membresías que vencen en los próximos 7 días.</p>
+    </div>
+    <div id="members-table" aria-live="polite">${rows()}</div>
+  </section>`;
+}
 function form(member = {}) { return `<form id="member-form" class="member-form"><div class="form-section-label">01 / DATOS DEL MIEMBRO</div><div class="form-grid"><div class="wide"><label for="name">Nombre completo</label><input id="name" name="name" value="${esc(member.name||'')}" minlength="3" maxlength="100" autocomplete="name" required></div><div><label for="age">Edad</label><input id="age" name="age" type="number" min="12" max="100" value="${member.age||''}" required></div><div><label for="area">Modalidad</label><select id="area" name="area"><option value="gym" ${member.area==='gym'?'selected':''}>Iron Gym</option><option value="cf" ${member.area==='cf'?'selected':''}>Iron Cross</option></select></div></div><div class="form-section-label">02 / MEMBRESÍA</div><div class="form-grid"><div><label for="start">Fecha de inicio</label><input id="start" name="start" type="date" value="${member.start||today()}" min="2000-01-01" max="2100-12-31" required></div><div><label for="months">Duración</label><select id="months" name="months">${[1,3,6,12].map(n=>`<option value="${n}" ${(member.months||1)===n?'selected':''}>${n} ${n===1?'mes':'meses'}</option>`).join('')}</select></div></div>${member.paid_until?`<p class="renew-note">Vigencia pagada hasta ${dateLabel(member.paid_until)}. Cambiar inicio o duración sustituye esta vigencia; para sumar tiempo usa Registrar pago.</p>`:""}<div class="form-preview" id="form-preview"></div><p id="save-error" class="form-error" role="alert"></p><div class="form-actions"><button type="button" class="button secondary" data-cancel>Cancelar</button><button type="submit" class="button">${member.id?'Guardar cambios':'＋ Registrar miembro'}</button></div></form>`; }
 function settings() { return `<div class="admin-title"><div><p class="eyebrow">ASÍ FUNCIONA TU ESPACIO</p><h1>Configuración</h1></div></div><section class="admin-card settings-card"><h2>${config.mode==='demo'?'Demostración local':'Datos compartidos en línea'}</h2><p>${config.mode==='demo'?'Los cambios se guardan en este navegador. En otro celular o computadora verás sus propios datos de prueba. Usa únicamente información ficticia.':'Los registros se comparten entre administración y el portal. Cada miembro consulta su vigencia escribiendo su nombre completo. Los comentarios llegan al buzón privado del panel.'}</p>${config.mode==='demo'?'<p>Para usar registros reales, sigue la sección «Activar membresías en línea» de LEEME.md incluida en el proyecto.</p><hr><h3>Restaurar ejemplos</h3><p>Reemplaza los registros de prueba de este navegador por los 66 miembros de ejemplo.</p><button class="button secondary" id="reset-demo">Restaurar demostración</button>':'<p>La sesión administrativa dura ocho horas. Las credenciales se administran desde las variables de entorno de Vercel.</p>'}</section>`; }
 function render() {
@@ -131,5 +214,5 @@ function paymentDialog(id){
  f.onsubmit=async e=>{e.preventDefault();const b=f.querySelector('button');b.disabled=true;$('#payment-error').textContent='';try{await recordPayment({...Object.fromEntries(new FormData(f)),id:requestId});dialog.close();view='payments';await refresh();render();toast('Pago guardado. La nueva vigencia ya está disponible para el miembro.');}catch(e){if(dialog.open)$('#payment-error').textContent=e.message;else handleError(e);}finally{b.disabled=false;}};
 }
 async function loadCommentSummary(){const el=$('#comment-summary');try{const comments=await listComments();if(!el?.isConnected)return;const count=comments.filter(c=>!c.reviewed).length;el.innerHTML=`<div class="card-heading"><h2>Comentarios nuevos</h2><strong>${count}</strong></div><button class="button secondary small" id="open-inbox">Abrir buzón</button>`;$('#open-inbox').onclick=()=>{view='comments';render();};}catch(e){if(el?.isConnected)el.textContent=e.message;}}
-// Actualiza el buzón mientras recepción lo tiene abierto.
+ // Actualiza el buzón mientras recepción lo tiene abierto.
 setInterval(()=>{if(document.visibilityState==='visible'&&$('#admin-main')&&!dialog.open){if(view==='comments')loadInbox();if(view==='dashboard')refreshReception();}},60000);

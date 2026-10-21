@@ -34,3 +34,74 @@
 .inbox-actions .delete-comment{color:#ffb1aa;border-color:#98514f}
 .example-label{font-size:12px;color:#f9cc75;margin-top:12px}
 @media(max-width:480px){.expiry-member .renew-button{width:100%}.expiry-person>button{font-size:24px}}
+
+/* Reception: clear independent filters and readable controls. */
+.admin-sidebar nav button{font-size:17px;min-height:56px}.admin-title p:last-child{font-size:17px}
+.export-help{font-size:16px;line-height:1.6;color:#d1d2da;margin:-12px 0 24px}
+.admin-title .export-register{font-size:17px;min-height:56px}
+.member-filters{padding:0 24px 24px;display:grid;grid-template-columns:1fr 1.4fr;gap:22px}
+.member-filters fieldset{border:0;margin:0;padding:0;min-width:0}.member-filters legend{font-size:18px;font-weight:800;color:#fff;margin-bottom:12px}
+.member-filters fieldset>div{display:flex;flex-wrap:wrap;gap:10px}
+.member-filters button{min-height:52px;padding:12px 17px;background:#25272d;color:#ececf1;border:2px solid #60636f;border-radius:8px;font-size:17px;font-weight:700}
+.member-filters button[aria-pressed=true]{background:#fff;color:#17191d;border-color:#fff;box-shadow:0 0 0 2px #ef4432}
+.member-filters>p{grid-column:1/-1;font-size:15px;color:#d1d2da;margin:0}
+.client-list .search-label input{font-size:18px;min-height:56px}.client-list #refresh{font-size:16px;min-height:52px}
+.client-list th{font-size:14px;color:#e2e2e8}.client-list td{font-size:17px;padding:22px 18px}
+.client-list .table-person strong{font-size:21px;font-weight:800;max-width:340px;line-height:1.35}.client-list .table-person small,.client-list td>small{font-size:15px;color:#c4c6ce}
+.client-list .area-label,.client-list .badge{font-size:16px}.client-list .row-actions button{min-height:50px;font-size:17px;padding:12px 16px;border-radius:8px;background:#343740;color:#fff;border:1px solid #737887}
+.client-list .table-bottom{font-size:17px;color:#e2e2e8}.admin-dialog .form-actions{flex-wrap:wrap}
+@media(max-width:1000px){.member-filters{grid-template-columns:1fr}.member-filters>p{grid-column:1}.list-toolbar{flex-wrap:wrap}.list-toolbar .search-label{flex-basis:100%}}
+/* Acciones claras en la lista de miembros. */
+.client-list .member-name-button {
+  display: block;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.client-list .member-name-button strong {
+  display: block;
+}
+
+.client-list .member-name-button:hover strong {
+  text-decoration: underline;
+  text-decoration-color: #ff7667;
+  text-underline-offset: 4px;
+}
+
+.client-list .row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.client-list .row-actions button {
+  cursor: pointer;
+}
+
+.client-list .row-actions .delete-action {
+  background: #43272a;
+  border-color: #96545a;
+  color: #ffd0cb;
+}
+
+.client-list .row-actions .delete-action:hover {
+  background: #603238;
+}
+
+@media (max-width: 650px) {
+  .client-list td:last-child {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+
+  .client-list .row-actions button {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .client-list .table-person strong {
+    min-width: 0;
+  }
+}
