@@ -22,11 +22,12 @@ export const dateLabel = s => new Intl.DateTimeFormat('es-MX', { dateStyle: 'med
 export const escapeHTML = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export function validateMember(m) {
   if (typeof m.name !== 'string' || m.name.trim().length < 3 || m.name.length > 100) throw new Error('Escribe un nombre de 3 a 100 caracteres.');
-  if (!Number.isInteger(Number(m.age)) || Number(m.age) < 12 || Number(m.age) > 100) throw new Error('La edad debe estar entre 12 y 100 años.');
+  const age = m.age == null || String(m.age).trim() === '' ? null : Number(m.age);
+  if (age !== null && (!Number.isInteger(Number(m.age)) || Number(m.age) < 12 || Number(m.age) > 100)) throw new Error('La edad debe estar entre 12 y 100 años.');
   if (!['gym', 'cf'].includes(m.area)) throw new Error('Selecciona una modalidad.');
   if (![1, 3, 6, 12].includes(Number(m.months))) throw new Error('Selecciona una duración válida.');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(m.start) || !Number.isFinite(Date.parse(m.start)) || new Date(m.start).toISOString().slice(0,10) !== m.start || m.start < '2000-01-01' || m.start > '2100-12-31') throw new Error('Selecciona una fecha válida.');
-  return { name: m.name.trim(), age: Number(m.age), area: m.area, start: m.start, months: Number(m.months) };
+  return { name: m.name.trim(), age, area: m.area, start: m.start, months: Number(m.months) };
 }
 
 export const normalizeName = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/\s+/g, ' ');
@@ -46,7 +47,7 @@ export function validateComment(data) {
 export function validatePayment(data) {
  const id=String(data.id||'');
  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) throw new Error('Identificador de pago inválido.');
- const member_id=Number(data.member_id), amount=Number(data.amount), months=Number(data.months), start=String(data.start||''), method=data.method;
+ const member_id=Number(data.member_id), amount=Number(data.amount == null || String(data.amount).trim() === '' ? 600 : data.amount), months=Number(data.months), start=String(data.start||''), method=data.method;
  if(!Number.isSafeInteger(member_id)||member_id<=0) throw new Error('Selecciona un miembro.');
  if(!Number.isFinite(amount)||amount<=0||amount>1000000||Math.abs(amount*100-Math.round(amount*100))>0.00001) throw new Error('Escribe un importe válido con hasta dos decimales.');
  validateMember({name:'Validación',age:18,area:'gym',start,months});

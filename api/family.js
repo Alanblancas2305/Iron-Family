@@ -1,3 +1,4 @@
+import { validateImportBatch } from '../src/import-validation.js';
 import {
   createHmac,
   randomBytes,
@@ -307,7 +308,7 @@ export default async function handler(req, res) {
         ? JSON.parse(req.body)
         : req.body || {};
 
-    if (JSON.stringify(body).length > 16000) {
+    if (JSON.stringify(body).length > (action === 'import' ? 250000 : 16000)) {
       return res.status(413).json({
         error: 'Solicitud demasiado grande.'
       });
@@ -416,6 +417,20 @@ export default async function handler(req, res) {
 
     // Mantener vigente la sesión mientras se utiliza el panel.
     renewSession(req, res);
+
+    if (action === 'import') {
+      requireMethod(req, ['POST']);
+      let rows;
+      try { rows = validateImportBatch(body.rows); }
+      catch (error) { return res.status(400).json({error:error.message}); }
+      try {
+        const result = await db('rpc/iron_import_members', {method:'POST', body:{p_rows:rows}});
+        return res.status(200).json(result);
+      } catch (error) {
+        error.message = 'No se confirmó la importación. Revisa la conexión y ejecuta ACTUALIZACION-CARGA-MASIVA.sql en Supabase. Puedes reintentar: los nombres existentes se omiten.';
+        throw error;
+      }
+    }
 
     // PAGOS
     if (action === 'payments') {

@@ -3,7 +3,7 @@
 create table if not exists public.iron_members (
   id bigint generated always as identity (start with 1001) primary key,
   name text not null check (char_length(name) between 3 and 100),
-  age integer not null check (age between 12 and 100),
+  age integer check (age between 12 and 100),
   area text not null check (area in ('gym','cf')),
   start date not null check (start between date '2000-01-01' and date '2100-12-31'),
   months integer not null check (months in (1,3,6,12)),

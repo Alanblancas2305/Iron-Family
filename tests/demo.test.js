@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { listMembers,listComments,deleteComment,deleteMember } from '../src/data.js';
-import { membership } from '../src/shared.js';
+import { membership, today } from '../src/shared.js';
 test('demo migration preserves edits, adds 60 once and keeps deletions',async()=>{
  const oldFetch=global.fetch, oldStorage=global.localStorage;
- const data=new Map([['iron_family_demo_v1',JSON.stringify([{id:1007,name:'Miembro conservado',access_code:'CUSTOM',start:'2026-01-01',months:1}])]]);
+ const data=new Map([['iron_family_demo_v1',JSON.stringify([{id:1007,name:'Miembro conservado',access_code:'CUSTOM',start:today(),months:1}])]]);
  global.localStorage={getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v)};
  global.fetch=async()=>({ok:true,headers:{get:()=> 'application/json'},json:async()=>({mode:'demo'})});
  try{

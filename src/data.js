@@ -1,3 +1,4 @@
+import { validateImportBatch, isStale } from './import-validation.js';
 import { addMonths, membership, today, validateMember, normalizeName, validateComment, validatePayment } from './shared.js';
 const KEY = 'iron_family_demo_v1';
 let config;
@@ -54,7 +55,7 @@ function read() {
   } catch { throw new Error('No pudimos leer los datos de prueba. Habilita el almacenamiento del navegador o restáuralos desde Configuración.'); }
 }
 function write(rows) { try { localStorage.setItem(KEY, JSON.stringify(rows)); } catch { throw new Error('No se pudieron guardar los cambios en este navegador.'); } }
-export async function listMembers() { return (await getConfig()).mode === 'cloud' ? api('members') : read(); }
+export async function listMembers() { if ((await getConfig()).mode === 'cloud') return api('members'); const rows=read(), kept=rows.filter(m=>!isStale(m)); if(kept.length!==rows.length){const ids=new Set(kept.map(m=>m.id));const payments=JSON.parse(localStorage.getItem('iron_payments_demo')||'[]');localStorage.setItem('iron_payments_demo',JSON.stringify(payments.map(p=>ids.has(p.member_id)?p:{...p,member_id:null})));write(kept);} return kept; }
 export async function saveMember(data) {
   const fields = validateMember(data);
   if ((await getConfig()).mode === 'cloud') return api('members', { ...fields, ...(data.id ? { id: Number(data.id) } : {}) }, data.id ? 'PATCH' : 'POST');
@@ -121,4 +122,25 @@ export async function recordPayment(data) {
  rows[index]={...member,start:fields.start===membership(member).end?member.start:fields.start,months:fields.months,paid_until:addMonths(fields.start,fields.months)};write(rows);
  const payment={...fields,member_name:member.name,created_at:new Date().toISOString()};
  localStorage.setItem('iron_payments_demo',JSON.stringify([payment,...payments]));return payment;
+}
+
+export async function importMembers(input) {
+  const valid=validateImportBatch(input);
+  if((await getConfig()).mode==='cloud') return api('import',{rows:valid});
+  const rows=read(), payments=await listPayments(), seen=new Set(rows.map(m=>normalizeName(m.name)));
+  let next=Math.max(1000,...rows.map(m=>Number(m.id))), imported=0, skipped=0;
+  for(const fields of valid) {
+    const key=normalizeName(fields.name);
+    if(seen.has(key)){skipped++;continue;}
+    seen.add(key);
+    const {amount,method,...member}=fields;
+    member.id=++next;member.access_code=crypto.randomUUID();rows.push(member);
+    payments.push({id:crypto.randomUUID(),member_id:member.id,member_name:member.name,amount,method,start:member.start,months:member.months,created_at:member.start+'T18:00:00.000Z'});
+    imported++;
+  }
+  // Restore both demo stores if storage quota prevents completing the write.
+  const oldMembers=localStorage.getItem(KEY), oldPayments=localStorage.getItem('iron_payments_demo');
+  try {write(rows);localStorage.setItem('iron_payments_demo',JSON.stringify(payments));}
+  catch(e){if(oldMembers===null)localStorage.removeItem(KEY);else localStorage.setItem(KEY,oldMembers);if(oldPayments===null)localStorage.removeItem('iron_payments_demo');else localStorage.setItem('iron_payments_demo',oldPayments);throw e;}
+  return {imported,skipped};
 }
