@@ -1,5 +1,5 @@
 import { validateImportBatch, isStale } from './import-validation.js';
-import { addMonths, membership, today, validateMember, normalizeName, validateComment, validatePayment } from './shared.js';
+import { periodEnd, addMonths, membership, today, validateMember, normalizeName, validateComment, validatePayment } from './shared.js';
 const KEY = 'iron_family_demo_v1';
 let config;
 export async function api(action, data, method = data ? 'POST' : 'GET') {
@@ -119,7 +119,7 @@ export async function recordPayment(data) {
  const member=read().find(m=>m.id===fields.member_id);
  if(!member) throw new Error('Este miembro ya no existe.');
  const rows=read(), index=rows.findIndex(x=>x.id===member.id);
- rows[index]={...member,start:fields.start===membership(member).end?member.start:fields.start,months:fields.months,paid_until:addMonths(fields.start,fields.months)};write(rows);
+ rows[index]={...member,start:fields.start===membership(member).end?member.start:fields.start,months:fields.months,paid_until:periodEnd(fields.start,fields.months)};write(rows);
  const payment={...fields,member_name:member.name,created_at:new Date().toISOString()};
  localStorage.setItem('iron_payments_demo',JSON.stringify([payment,...payments]));return payment;
 }

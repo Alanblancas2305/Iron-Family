@@ -1,4 +1,4 @@
-import { membership, areaName, today } from './shared.js';
+import { durationLabel, membership, areaName, today } from './shared.js';
 
 const xml = value => String(value ?? '')
   .replace(/[&<>"']/g, character => ({
@@ -130,7 +130,7 @@ export function createRegisterWorkbook(members, payments, comments) {
     [
       'Miembros',
       [
-        ['Número', 'Nombre completo', 'Edad', 'Modalidad', 'Inicio', 'Meses', 'Vencimiento', 'Estado', 'Días restantes'],
+        ['Número', 'Nombre completo', 'Edad', 'Modalidad', 'Inicio', 'Duración', 'Vencimiento', 'Estado', 'Días restantes'],
         ...members.map(member => {
           const status = membership(member);
 
@@ -140,7 +140,7 @@ export function createRegisterWorkbook(members, payments, comments) {
             member.age,
             areaName(member.area),
             member.start,
-            member.months,
+            durationLabel(member.months),
             status.end,
             status.label,
             status.days
@@ -151,7 +151,7 @@ export function createRegisterWorkbook(members, payments, comments) {
     [
       'Pagos',
       [
-        ['Identificador', 'Miembro', 'Número de miembro', 'Importe MXN', 'Forma de pago', 'Inicio del periodo', 'Meses', 'Fecha de registro'],
+        ['Identificador', 'Miembro', 'Número de miembro', 'Importe MXN', 'Forma de pago', 'Inicio del periodo', 'Duración', 'Fecha de registro'],
         ...payments.map(payment => [
           payment.id,
           payment.member_name,
@@ -159,7 +159,7 @@ export function createRegisterWorkbook(members, payments, comments) {
           payment.amount,
           payment.method,
           payment.start,
-          payment.months,
+          durationLabel(payment.months),
           payment.created_at
         ])
       ]

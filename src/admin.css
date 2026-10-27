@@ -114,3 +114,30 @@
 .import-preview-table th{position:sticky;top:0;background:#202126;z-index:1}
 #import-file{margin:8px 0 16px;max-width:100%}
 #import-preview{margin-top:16px}
+
+/* Compact reception workspace: readable names, less empty space. */
+.admin-sidebar nav button{min-height:46px;font-size:15px}
+.admin-title{margin-bottom:16px;gap:16px}.admin-title h1{font-size:28px}.admin-title p:last-child{font-size:14px}
+.reception-title .eyebrow{margin-bottom:5px}.reception-title h1{font-size:27px}
+.admin-title .register-cta{position:relative;overflow:hidden;min-height:56px;padding:12px 22px;border-radius:13px;background:linear-gradient(115deg,#d92c20,#ff6247);box-shadow:0 6px 22px #f0443238;transition:transform .2s,box-shadow .2s}
+.register-cta::after{content:"";position:absolute;inset:-60% auto -60% -60%;width:35%;background:linear-gradient(90deg,transparent,#ffffff40,transparent);transform:rotate(22deg);animation:register-shine 6s ease-in-out 2}
+.admin-title .register-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px #f0443255}.register-cta:active{transform:translateY(0)}
+.register-cta small{font-size:11px}.register-cta:focus-visible{outline:3px solid white;outline-offset:4px}
+@keyframes register-shine{0%,65%{left:-60%}100%{left:150%}}
+.reception-stats{gap:10px}.reception-stats .stat-card{padding:12px 15px}.reception-stats .stat-card>strong{font-size:29px;margin-top:5px}.reception-stats .stat-card>small{display:none}.reception-stats .stat-card>div{font-size:12px}
+.reception-toolbar{margin:10px 0}.expiry-board{gap:12px}.expiry-heading{padding:12px 16px}.expiry-heading h2{font-size:19px}.expiry-heading>strong{height:32px;min-width:32px;font-size:20px}.expiry-heading p{font-size:9px}
+.expiry-list{height:clamp(240px,calc(100svh - 390px),580px)}
+.expiry-member{padding:11px 15px;gap:12px;flex-wrap:nowrap}.expiry-person{flex:1;min-width:0}.expiry-person>button{font-size:18px;line-height:1.25}.expiry-person>small{font-size:11px;margin-top:3px}.expiry-person>small:last-child{display:none}.expiry-time{font-size:12px;margin-top:4px}
+.expiry-member .renew-button{min-width:96px;min-height:42px;padding:9px 12px;font-size:14px;border-width:1px;width:auto}.expiry-footer{min-height:36px;padding:9px 16px}
+.reception-bottom{gap:12px;margin-top:12px}.reception-bottom #comment-summary,.reception-payment{padding:12px 16px}.reception-payment small{display:none}
+.client-list .list-toolbar{padding:14px 16px;gap:10px}.client-list .search-label input{min-height:44px;font-size:15px}.client-list #refresh{min-height:42px;font-size:13px;padding:10px 14px}
+.member-filters{padding:0 16px 14px;display:flex;flex-wrap:wrap;gap:14px 24px}.member-filters legend{font-size:12px;margin-bottom:7px;color:#bfc0ca}.member-filters fieldset>div{gap:6px}.member-filters button{min-height:36px;font-size:13px;padding:7px 12px;border-width:1px}
+.client-list th{font-size:11px;padding:10px 14px}.client-list td{font-size:14px;padding:10px 14px}.client-list .table-person strong{font-size:16px;line-height:1.3;max-width:none}.client-list .table-person small,.client-list td>small{font-size:11px;margin-top:3px}.client-list .badge,.client-list .area-label{font-size:12px}.client-list .row-actions{gap:5px}.client-list .row-actions button{min-height:36px;font-size:12px;padding:7px 10px}.client-list .row-actions .renew-action{background:#583029;border-color:#b46451;color:#ffe1d7}.client-list .table-bottom{padding:10px 16px;font-size:12px}
+.client-list .table-scroll{max-height:calc(100svh - 350px);overflow:auto;min-height:200px}.client-list thead th{position:sticky;top:0;background:#202126;z-index:1}
+.admin-title .export-register{min-height:40px;font-size:13px;padding:10px 15px}.excel-actions{gap:3px}
+.admin-dialog{width:min(580px,calc(100vw - 28px));max-height:calc(100svh - 32px);overflow:auto;padding:25px}.admin-dialog h2{font-size:25px;margin-bottom:15px}.admin-dialog .eyebrow{font-size:10px;margin-bottom:6px}
+.admin-dialog .member-form{margin-top:12px}.admin-dialog .form-grid{gap:12px}.admin-dialog label{font-size:13px;margin:0 0 6px;display:block}.admin-dialog input,.admin-dialog select{min-height:44px;padding:10px 12px;font-size:15px}.admin-dialog .form-section-label{margin:12px 0;padding:8px 12px;font-size:10px}.admin-dialog .form-preview{margin-top:14px;padding:13px 16px}.admin-dialog .renew-note{font-size:12px;line-height:1.5;margin:12px 0}.admin-dialog .form-actions{gap:9px;margin-top:16px}.admin-dialog .form-actions .button{min-height:44px;padding:11px 16px;font-size:13px}.admin-dialog .form-actions .button[type=submit]{flex:1}
+#payment-form>select{margin-bottom:14px}
+@media(min-width:951px){.admin-sidebar{width:220px}.admin-page{margin-left:220px}#admin-main{padding:18px 22px}.admin-header{height:60px}}
+@media(max-width:650px){.reception-title h1{font-size:24px}.expiry-list{height:320px}.expiry-person>button{font-size:17px}.member-filters{gap:14px}.client-list .table-scroll{max-height:none}.client-list .row-actions button{min-width:75px;min-height:40px}.admin-dialog{padding:22px 16px}.admin-dialog .form-grid{grid-template-columns:1fr 1fr}.admin-dialog .form-grid>.wide{grid-column:1/-1}.reception-bottom{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.register-cta::after{animation:none}.admin-title .register-cta{transition:none;transform:none}}

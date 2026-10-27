@@ -11,7 +11,7 @@ begin
   -- Mismo bloqueo que la carga: una renovación y la limpieza no pisan sus cambios.
   lock table public.iron_members in share row exclusive mode;
   delete from public.iron_members
-  where (coalesce(paid_until,(start+make_interval(months=>months))::date) + interval '3 months')::date
+  where (coalesce(paid_until,(start+case when months=0 then interval '7 days' else make_interval(months=>months) end)::date) + interval '3 months')::date
     < (now() at time zone 'America/Mexico_City')::date;
   get diagnostics removed = row_count;
   return removed;

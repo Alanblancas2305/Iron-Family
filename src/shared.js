@@ -6,9 +6,16 @@ export function addMonths(start, months) {
   t.setUTCDate(Math.min(d, new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth() + 1, 0)).getUTCDate()));
   return t.toISOString().slice(0, 10);
 }
+// Storage compatibility: months=0 represents exactly one seven-day membership.
+// Calendar month arithmetic remains unchanged for reports and retention.
+export function periodEnd(start, months) {
+  if (Number(months) === 0) return new Date(Date.parse(start + 'T00:00:00Z') + 7 * 86400000).toISOString().slice(0, 10);
+  return addMonths(start, months);
+}
+export const durationLabel = months => Number(months) === 0 ? '1 semana · 7 días' : `${months} ${Number(months) === 1 ? 'mes' : 'meses'}`;
 export const daysBetween = (from, to) => Math.round((Date.parse(to + 'T00:00:00Z') - Date.parse(from + 'T00:00:00Z')) / 86400000);
 export function membership(m, on = today()) {
-  const end = m.paid_until || addMonths(m.start, m.months), days = daysBetween(on, end), pending = on < m.start;
+  const end = m.paid_until || periodEnd(m.start, m.months), days = daysBetween(on, end), pending = on < m.start;
   const state = pending ? 'pending' : days < 0 ? 'expired' : days <= 7 ? 'soon' : 'active';
   return { end, days, state, label: { pending: 'Por iniciar', expired: 'Vencida', soon: 'Por vencer', active: 'Activa' }[state], progress: pending ? 100 : Math.max(0, Math.min(100, days / daysBetween(m.start, end) * 100)) };
 }
@@ -25,7 +32,7 @@ export function validateMember(m) {
   const age = m.age == null || String(m.age).trim() === '' ? null : Number(m.age);
   if (age !== null && (!Number.isInteger(Number(m.age)) || Number(m.age) < 12 || Number(m.age) > 100)) throw new Error('La edad debe estar entre 12 y 100 años.');
   if (!['gym', 'cf'].includes(m.area)) throw new Error('Selecciona una modalidad.');
-  if (![1, 3, 6, 12].includes(Number(m.months))) throw new Error('Selecciona una duración válida.');
+  if (m.months == null || String(m.months).trim() === '' || ![0, 1, 3, 6, 12].includes(Number(m.months))) throw new Error('Selecciona una duración válida.');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(m.start) || !Number.isFinite(Date.parse(m.start)) || new Date(m.start).toISOString().slice(0,10) !== m.start || m.start < '2000-01-01' || m.start > '2100-12-31') throw new Error('Selecciona una fecha válida.');
   return { name: m.name.trim(), age, area: m.area, start: m.start, months: Number(m.months) };
 }
@@ -45,6 +52,7 @@ export function validateComment(data) {
 }
 
 export function validatePayment(data) {
+ if (data.months == null || String(data.months).trim() === '') throw new Error('Selecciona una duración válida.');
  const id=String(data.id||'');
  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) throw new Error('Identificador de pago inválido.');
  const member_id=Number(data.member_id), amount=Number(data.amount == null || String(data.amount).trim() === '' ? 600 : data.amount), months=Number(data.months), start=String(data.start||''), method=data.method;
