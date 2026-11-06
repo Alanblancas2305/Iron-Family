@@ -37,6 +37,7 @@
 
     <nav class="desktop-nav" aria-label="Navegación principal">
       <a href="#modalidades">Modalidades</a>
+      <a href="#planes">Planes</a>
       <a href="#horarios">Horarios</a>
       <a href="#fuel">Iron Fuel</a>
       <a href="#coaches">La familia</a>
@@ -63,6 +64,7 @@
       hidden
     >
       <a href="#modalidades">Modalidades</a>
+      <a href="#planes">Planes</a>
       <a href="#horarios">Horarios</a>
       <a href="#fuel">Iron Fuel</a>
       <a href="#coaches">La familia</a>
@@ -371,6 +373,24 @@
       </div>
     </section>
 
+    <!-- PLANES -->
+    <section id="planes" class="section wrap plans-section" aria-labelledby="plans-heading">
+      <div class="plans-invite reveal">
+        <div>
+          <p class="eyebrow">TU META. TU RITMO. TU PLAN.</p>
+          <h2 id="plans-heading" class="rough">DA EL<br><span class="red">SIGUIENTE PASO.</span></h2>
+          <p>Por visita, por semana o todo el mes.<br>Encuentra la opción que va contigo.</p>
+          <span class="plans-scope">Mismos precios para Gym y CrossFit</span>
+        </div>
+        <div class="plans-invite-action">
+          <span class="plans-from">MENSUALIDAD GENERAL</span>
+          <p class="plans-teaser-price">$550 <small>MXN / mes</small></p>
+          <button class="button" type="button" data-open-plans aria-haspopup="dialog" aria-controls="plans-dialog">Ver planes <span aria-hidden="true">↗</span></button>
+          <span class="plans-payment">Tarjeta y transferencia · En recepción</span>
+        </div>
+      </div>
+    </section>
+
     <!-- HORARIOS -->
     <section
       id="horarios"
@@ -395,37 +415,22 @@
 
       <div class="schedule-grid">
         <article class="schedule-card reveal">
-          <span class="schedule-label">LUNES A VIERNES</span>
-          <h3>Entre semana</h3>
-
+          <span class="schedule-label">A TU RITMO</span>
+          <h3>IRON GYM</h3>
           <dl>
-            <div>
-              <dt>Mañana</dt>
-              <dd>7:00 <small>am</small> — 11:00 <small>am</small></dd>
-            </div>
-
-            <div>
-              <dt>Tarde</dt>
-              <dd>5:00 <small>pm</small> — 9:30 <small>pm</small></dd>
-            </div>
+            <div><dt>Lunes a viernes</dt><dd>7:00 <small>am</small> — 10:00 <small>pm</small></dd></div>
+            <div><dt>Sábado</dt><dd>8:00 <small>am</small> — 11:00 <small>am</small></dd></div>
           </dl>
+          <p>Haz espacio para ti. Entrena a tu ritmo.</p>
         </article>
-
         <article class="schedule-card reveal">
-          <span class="schedule-label">SÁBADO</span>
-          <h3>Cierra con todo</h3>
-
+          <span class="schedule-label">LUNES A VIERNES</span>
+          <h3>IRON CROSS <span class="cross-subtitle">CrossFit</span></h3>
           <dl>
-            <div>
-              <dt>Mañana</dt>
-              <dd>7:00 <small>am</small> — 11:00 <small>am</small></dd>
-            </div>
+            <div><dt>Mañana</dt><dd class="class-times"><span>7:30 <small>am</small></span><span>9:00 <small>am</small></span></dd></div>
+            <div><dt>Tarde</dt><dd class="class-times"><span>6:00 <small>pm</small></span><span>7:00 <small>pm</small></span><span>8:00 <small>pm</small></span></dd></div>
           </dl>
-
-          <p>
-            Un entrenamiento más.<br>
-            Un paso más hacia tu meta.
-          </p>
+          <p>Cinco horarios para entrenar en comunidad.</p>
         </article>
       </div>
     </section>
@@ -759,6 +764,27 @@
       <span>FUERZA · CARÁCTER · COMUNIDAD</span>
     </div>
   </footer>
+
+  <dialog id="plans-dialog" class="plans-dialog" aria-labelledby="plans-title" aria-describedby="plans-description">
+    <div class="plans-dialog-bar">
+      <span>IRON PANTHERS <span class="red">/ PLANES</span></span>
+      <button type="button" class="plans-close icon-button" aria-label="Cerrar planes" autofocus>×</button>
+    </div>
+    <div class="plans-dialog-content">
+      <header class="plans-intro">
+        <p class="eyebrow">EL HIERRO NOS UNE</p>
+        <h2 id="plans-title">Un plan para<br><span class="red">tu siguiente meta.</span></h2>
+        <p id="plans-description">Elige cómo entrenar. Los precios son los mismos para Gym y CrossFit.</p>
+      </header>
+      <div class="plans-tabs" role="tablist" aria-label="Tipo de plan">
+        <button type="button" id="monthly-tab" role="tab" aria-selected="true" aria-controls="monthly-plans">Mensualidades</button>
+        <button type="button" id="visits-tab" role="tab" aria-selected="false" aria-controls="visits-plans" tabindex="-1">Semana y visitas</button>
+      </div>
+      <div id="monthly-plans" class="plans-grid" role="tabpanel" aria-labelledby="monthly-tab"></div>
+      <div id="visits-plans" class="plans-grid plans-grid-short" role="tabpanel" aria-labelledby="visits-tab" hidden></div>
+      <footer class="plans-dialog-footer"><span>Todos los precios en pesos mexicanos (MXN).</span><span>Pagos en recepción · Tarjeta y transferencia</span></footer>
+    </div>
+  </dialog>
 
   <!-- GALERÍA DE INSTALACIONES -->
   <dialog
