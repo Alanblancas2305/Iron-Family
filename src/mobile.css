@@ -52,3 +52,9 @@
 @media (max-width: 360px) {
  .site-header .brand { font-size: 16px; }
 }
+
+/* Keep flavor names prominent without pushing the shake controls down. */
+.fuel-flavor #flavor-name { font-size: clamp(42px, 5vw, 76px); line-height: 1.08; }
+@media (max-width: 600px) {
+ .fuel-flavor #flavor-name { font-size: clamp(38px, 10.5vw, 60px); margin: 8px 0; }
+}
