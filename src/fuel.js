@@ -36,14 +36,12 @@ function selectedFlavor(index) {
   fuel.style.setProperty('--scene-bg', s.bg);
   $('#flavor-name').textContent = s.name;
   $('#flavor-note').textContent = s.note;
-  $('#flavor-count').textContent = `${num(index)} / 05`;
   scenes.setAttribute('aria-label', `Malteada de ${s.name.toLowerCase()}, presentación ilustrativa`);
   document.querySelectorAll('[data-flavor]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.flavor === index));
 }
 function selectedProduct(index) {
   if (product === index) return;
   product = index;
-  $('#pre-count').textContent = `${num(index)} / 04`;
   $('#pre-prev').disabled = index === 0;
   $('#pre-next').disabled = index === pres.length - 1;
   productNodes.forEach((el, i) => el.setAttribute('aria-hidden', i !== index));

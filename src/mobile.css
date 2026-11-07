@@ -29,3 +29,14 @@
  .panther-athlete{left:3%;width:94%}
 }
 @media(prefers-reduced-motion:reduce) and (max-width:800px){.panther-ring-back{transform:rotate(-18deg)}}
+
+/* Simplified public layout and a larger mobile hero title. */
+.modality-card .card-top { justify-content: flex-end; }
+.coaches-section .team-photo::after { display: none; }
+@media (max-width: 800px) {
+ .panther-title { top: 24px; left: 4%; right: 4%; font-size: clamp(76px, 20vw, 150px); line-height: 1.02; letter-spacing: -.055em; }
+ .panther-title .panther-cross { font-size: .95em; }
+ .panther-title .panther-and { font-size: .46em; }
+ .panther-copy { bottom: 36px; }
+ .fuel-editorial h2 { font-size: clamp(28px, 7vw, 42px); }
+}
