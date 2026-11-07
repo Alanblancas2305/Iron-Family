@@ -1,6 +1,7 @@
 import './hero.js';
 import './fuel.js';
 import './mobile.css';
+import './coaches.js';
 import './plans.js';
 import './comments.js';
 import { getConfig, lookup } from './data.js';

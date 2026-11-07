@@ -1,0 +1,55 @@
+.coach-lineup {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: #050505;
+  isolation: isolate;
+}
+
+.coach-portrait {
+  position: relative;
+  display: block;
+  min-width: 0;
+  padding: 0;
+  aspect-ratio: 3 / 5;
+  overflow: hidden;
+  background: #050505;
+  touch-action: manipulation;
+}
+
+.coach-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: grayscale(1) brightness(.48);
+  transition: filter .55s ease, transform .7s ease;
+}
+
+.coach-portrait::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 -3px var(--red);
+  background: linear-gradient(0deg, #e32d181c, transparent 30%);
+  opacity: 0;
+  transition: opacity .55s ease;
+}
+
+.coach-portrait.is-active img {
+  filter: grayscale(0) brightness(1);
+  transform: scale(1.025);
+}
+
+.coach-portrait.is-active::after { opacity: 1; }
+.coach-portrait:focus-visible { outline-offset: -3px; z-index: 1; }
+
+@media (max-width: 600px) {
+  .coach-lineup { margin-inline: -22px; }
+  .coach-portrait { aspect-ratio: 1 / 3.4; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coach-portrait img, .coach-portrait::after { transition: none; }
+  .coach-portrait.is-active img { transform: none; }
+}
