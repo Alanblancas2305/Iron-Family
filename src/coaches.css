@@ -81,3 +81,8 @@
 .coach-dots button::after { content: ''; display: block; height: 10px; border-radius: 10px; background: #686868; }
 .coach-dots button[aria-pressed="true"]::after { background: var(--red); }
 .coach-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Keep coach 2 centered with breathing room above his hair. */
+.coach-portrait:has(img[src="/assets/coach2.PNG"]) { padding-top: 16px; }
+.coach-portrait img[src="/assets/coach2.PNG"] { object-position: 62% top; transform-origin: center top; }
+.coach-portrait.is-active img[src="/assets/coach2.PNG"] { transform: none; }

@@ -40,3 +40,15 @@
  .panther-copy { bottom: 36px; }
  .fuel-editorial h2 { font-size: clamp(28px, 7vw, 42px); }
 }
+
+/* Larger header wordmark, with room for membership and menu controls. */
+.site-header .brand { font-size: 26px; }
+@media (max-width: 580px) {
+ .site-header .brand { font-size: 18px; line-height: 1.08; white-space: normal; min-width: 0; }
+ .site-header .brand > span { max-width: 145px; }
+ .site-header .brand-logo { flex-shrink: 0; }
+ .site-header .header-actions { flex-shrink: 0; }
+}
+@media (max-width: 360px) {
+ .site-header .brand { font-size: 16px; }
+}
