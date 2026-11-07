@@ -598,19 +598,32 @@
 
         </div>
 
-        <div class="coach-lineup reveal" role="group" aria-label="Equipo Iron: selecciona un coach para iluminar su fotografía">
-          <button class="coach-portrait" type="button" aria-label="Iluminar coach 1" aria-pressed="false">
-            <img src="/assets/coach1.PNG" loading="lazy" decoding="async" alt="Coach 1 de Iron Panthers" width="1122" height="1402">
-          </button>
-          <button class="coach-portrait is-active" type="button" aria-label="Iluminar coach 2" aria-pressed="true">
-            <img src="/assets/coach2.PNG" loading="lazy" decoding="async" alt="Coach 2 de Iron Panthers" width="1126" height="1397">
-          </button>
-          <button class="coach-portrait" type="button" aria-label="Iluminar coach 3" aria-pressed="false">
-            <img src="/assets/coach3.PNG" loading="lazy" decoding="async" alt="Coach 3 de Iron Panthers" width="1086" height="1448">
-          </button>
-          <button class="coach-portrait" type="button" aria-label="Iluminar coach 4" aria-pressed="false">
-            <img src="/assets/coach4.PNG" loading="lazy" decoding="async" alt="Coach 4 de Iron Panthers" width="1122" height="1402">
-          </button>
+        <div class="coach-carousel reveal" role="region" aria-roledescription="carrusel" aria-label="Equipo Iron">
+          <div class="coach-window">
+            <div class="coach-lineup" id="coach-lineup">
+              <button class="coach-portrait is-active" type="button" aria-label="Iluminar coach 2" aria-pressed="true">
+                <img src="/assets/coach2.PNG" loading="lazy" decoding="async" alt="Coach 2 de Iron Panthers" width="1126" height="1397">
+              </button>
+              <button class="coach-portrait" type="button" aria-label="Iluminar coach 3" aria-pressed="false">
+                <img src="/assets/coach3.PNG" loading="lazy" decoding="async" alt="Coach 3 de Iron Panthers" width="1086" height="1448">
+              </button>
+              <button class="coach-portrait" type="button" aria-label="Iluminar coach 4" aria-pressed="false">
+                <img src="/assets/coach4.PNG" loading="lazy" decoding="async" alt="Coach 4 de Iron Panthers" width="1122" height="1402">
+              </button>
+              <button class="coach-portrait" type="button" aria-label="Iluminar coach 1" aria-pressed="false">
+                <img src="/assets/coach1.PNG" loading="lazy" decoding="async" alt="Coach 1 de Iron Panthers" width="1122" height="1402">
+              </button>
+            </div>
+            <button class="coach-arrow coach-prev" type="button" aria-label="Coach anterior" aria-controls="coach-lineup" disabled>‹</button>
+            <button class="coach-arrow coach-next" type="button" aria-label="Siguiente coach" aria-controls="coach-lineup">›</button>
+          </div>
+          <div class="coach-dots" aria-label="Seleccionar coach">
+            <button type="button" aria-label="Ver coach 2" aria-pressed="true"></button>
+            <button type="button" aria-label="Ver coach 3" aria-pressed="false"></button>
+            <button type="button" aria-label="Ver coach 4" aria-pressed="false"></button>
+            <button type="button" aria-label="Ver coach 1" aria-pressed="false"></button>
+          </div>
+          <span class="coach-status" aria-live="polite" aria-atomic="true">Coach 2 seleccionado</span>
         </div>
 
       </div>
