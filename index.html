@@ -334,7 +334,6 @@
         <div>
 
           <h2 class="rough">
-            CONOCE NUESTRAS<br>
             <span class="red">INSTALACIONES</span>
           </h2>
         </div>
@@ -356,7 +355,7 @@
 
           <span class="card-top">
             
-            <span class="circle-plus" aria-hidden="true">+</span>
+            <span aria-hidden="true">↗</span>
           </span>
 
           <span class="modality-caption">
@@ -373,8 +372,8 @@
           aria-controls="gallery-dialog"
         >
           <img
-            src="/assets/cross.jpg"
-            alt="Imagen ilustrativa de entrenamiento funcional"
+            src="/images/instalaciones/cros1.jpg"
+            alt="Mural y equipo de IRON CROSS"
             loading="lazy"
             width="1400"
             height="933"
@@ -382,7 +381,7 @@
 
           <span class="card-top">
             
-            <span class="circle-plus" aria-hidden="true">+</span>
+            <span aria-hidden="true">↗</span>
           </span>
 
           <span class="modality-caption">
@@ -736,31 +735,25 @@
     class="gallery-dialog"
     aria-labelledby="gallery-title"
   >
-    <button
-      type="button"
-      class="dialog-close icon-button"
-      aria-label="Cerrar galería"
-      autofocus
-    >×</button>
-
-    <div
-      id="gallery-collage"
-      class="installation-collage"
-      role="group"
-      aria-label="Fotografías de las instalaciones"
-    ></div>
-
-    <div class="gallery-details">
-      <p class="eyebrow" id="gallery-eyebrow"></p>
+    <header class="gallery-bar">
+      <span>IRON PANTHERS</span>
+      <button type="button" class="dialog-close" autofocus aria-label="Cerrar galería">Cerrar ×</button>
+    </header>
+    <div class="gallery-intro">
       <h2 class="rough" id="gallery-title"></h2>
       <p id="gallery-description"></p>
-      <ul id="gallery-features"></ul>
-      <p class="photo-note" id="gallery-note" hidden></p>
-
-      <button type="button" class="button" id="gallery-membership">
-        Consultar mi membresía
-      </button>
+      <span class="gallery-hint">Toca una foto para ampliarla <span aria-hidden="true">↗</span></span>
     </div>
+    <div id="gallery-collage" class="installation-collage" role="group" aria-label="Fotografías de las instalaciones"></div>
+    <footer class="gallery-details">
+      <ul id="gallery-features"></ul>
+      <button type="button" class="button" id="gallery-return">← Regresar</button>
+    </footer>
+  </dialog>
+  <dialog id="photo-dialog" class="photo-dialog" aria-label="Fotografía ampliada">
+    <div class="photo-toolbar"><p id="photo-count" aria-live="polite"></p><button type="button" id="photo-close" autofocus>Regresar ×</button></div>
+    <div class="photo-stage"><button type="button" id="photo-prev" aria-label="Foto anterior">‹</button><img id="photo-full" alt=""><button type="button" id="photo-next" aria-label="Foto siguiente">›</button></div>
+    <p id="photo-caption"></p>
   </dialog>
 
   <script type="module" src="/src/main.js"></script>
