@@ -4,7 +4,11 @@ const carousel = document.querySelector('.coach-carousel');
 if (carousel) {
   const lineup = carousel.querySelector('.coach-lineup');
   const coaches = [...carousel.querySelectorAll('.coach-portrait')];
-  const dots = [...carousel.querySelectorAll('.coach-dots button')];
+  const namePanel = carousel.querySelector('.coach-name');
+  const names = ['Edgar', 'Valeria', 'Joshua', 'Carla'];
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let shownName = '';
+  let nameAnimation;
   const prev = carousel.querySelector('.coach-prev');
   const next = carousel.querySelector('.coach-next');
   const status = carousel.querySelector('.coach-status');
@@ -12,6 +16,16 @@ if (carousel) {
   let firstVisible = 0;
 
   const illuminate = index => {
+    const name = names[index];
+    if (shownName !== name) {
+      shownName = name;
+      namePanel.textContent = name.toUpperCase();
+      nameAnimation?.cancel();
+      if (!reduced.matches) nameAnimation = namePanel.animate([
+        { opacity: 0, transform: 'translateY(22px)', filter: 'blur(5px)' },
+        { opacity: 1, transform: 'translateY(0)', filter: 'blur(0)' }
+      ], { duration: 550, easing: 'cubic-bezier(.2,.7,.2,1)' });
+    }
     coaches.forEach((coach, i) => {
       coach.classList.toggle('is-active', i === index);
       coach.setAttribute('aria-pressed', String(i === index));
@@ -25,14 +39,12 @@ if (carousel) {
       coach.inert = i < firstVisible || i > firstVisible + 1;
     });
     illuminate(selected);
-    dots.forEach((dot, i) => dot.setAttribute('aria-pressed', String(i === selected)));
     prev.disabled = selected === 0;
     next.disabled = selected === coaches.length - 1;
     status.textContent = coaches[selected].querySelector('img').alt + ' seleccionado';
   };
   prev.addEventListener('click', () => select(selected - 1));
   next.addEventListener('click', () => select(selected + 1));
-  dots.forEach((dot, i) => dot.addEventListener('click', () => select(i)));
   coaches.forEach((coach, i) => {
     coach.addEventListener('pointerenter', event => {
       if (event.pointerType === 'mouse') illuminate(i);
@@ -48,7 +60,7 @@ if (carousel) {
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
     event.preventDefault();
     select(selected + (event.key === 'ArrowRight' ? 1 : -1));
-    dots[selected].focus({ preventScroll: true });
+    coaches[selected].focus({ preventScroll: true });
   });
   select(0);
 }

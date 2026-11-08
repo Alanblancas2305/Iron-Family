@@ -3,7 +3,6 @@ const $ = selector => document.querySelector(selector);
 const gallery = $('#gallery-dialog');
 const collage = $('#gallery-collage');
 const viewer = $('#photo-dialog');
-const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const base = '/images/instalaciones/';
 const areas = {
   gym: {
@@ -17,34 +16,7 @@ const areas = {
     files: [1, 2, 4, 3, 5, 6, 7, 8].map(i => `cros${i}.jpg`)
   }
 };
-let activeArea, photoIndex = 0, opener, photoOpener, frame = 0;
-let tiles = [];
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('is-visible');
-      observer.unobserve(entry.target);
-    }
-  });
-}, { root: gallery, threshold: 0.08 });
-
-function renderMotion() {
-  frame = 0;
-  if (!gallery.open) return;
-  const viewport = gallery.getBoundingClientRect();
-  tiles.forEach((tile, i) => {
-    const rect = tile.getBoundingClientRect();
-    if (rect.bottom < viewport.top || rect.top > viewport.bottom) return;
-    const progress = Math.max(0, Math.min(1, (viewport.bottom - rect.top) / (viewport.height + rect.height)));
-    const photo = tile.firstElementChild;
-    photo.style.setProperty('--drift', reduced.matches ? '0px' : `${(progress - .5) * (i % 2 ? -18 : 18)}px`);
-    photo.style.setProperty('--zoom', reduced.matches ? '1' : String(1.035 + progress * .045));
-  });
-}
-function scheduleMotion() { if (!frame) frame = requestAnimationFrame(renderMotion); }
-gallery.addEventListener('scroll', scheduleMotion, { passive: true });
-window.addEventListener('resize', scheduleMotion, { passive: true });
-reduced.addEventListener('change', scheduleMotion);
+let activeArea, photoIndex = 0, opener, photoOpener;
 
 function showPhoto(index) {
   photoIndex = (index + activeArea.files.length) % activeArea.files.length;
@@ -60,14 +32,14 @@ document.querySelectorAll('[data-gallery]').forEach(button => {
     activeArea = areas[button.dataset.gallery];
     if (!activeArea) return;
     opener = button;
-    observer.disconnect();
     collage.replaceChildren();
+    collage.dataset.area = button.dataset.gallery;
     $('#gallery-title').textContent = activeArea.title;
     $('#gallery-description').textContent = activeArea.description;
     $('#gallery-features').replaceChildren(...activeArea.features.map(text => {
       const li = document.createElement('li'); li.textContent = text; return li;
     }));
-    tiles = activeArea.files.map((file, i) => {
+    activeArea.files.forEach((file, i) => {
       const tile = document.createElement('div');
       tile.className = 'installation-tile';
       const photo = document.createElement('button');
@@ -83,18 +55,13 @@ document.querySelectorAll('[data-gallery]').forEach(button => {
       photo.addEventListener('click', () => {
         photoOpener = photo; showPhoto(i); viewer.showModal();
       });
-      return tile;
     });
     document.body.classList.add('modal-open');
     gallery.showModal(); gallery.scrollTop = 0;
-    tiles.forEach(tile => observer.observe(tile));
-    scheduleMotion();
   });
 });
 gallery.querySelector('.dialog-close').addEventListener('click', closeGallery);
-$('#gallery-return').addEventListener('click', closeGallery);
 gallery.addEventListener('close', () => {
-  observer.disconnect(); cancelAnimationFrame(frame); frame = 0;
   document.body.classList.remove('modal-open');
   opener?.focus({ preventScroll: true });
 });
