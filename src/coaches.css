@@ -31,7 +31,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(0deg, #e32d181c, transparent 30%);
+  background: linear-gradient(0deg, #dc0b191c, transparent 30%);
   opacity: 0;
   transition: opacity .55s ease;
 }
@@ -75,11 +75,11 @@
 .coach-prev { left: 12px; }
 .coach-next { right: 12px; }
 .coach-arrow:disabled { opacity: .3; cursor: default; }
-.coach-name-panel { display: grid; place-items: center; align-content: center; min-height: 130px; padding: 22px 16px; overflow: hidden; background: #101010; }
-.coach-name-panel { font-size: clamp(48px, 9vw, 112px); gap: 4px; }
+.coach-name-panel { display: grid; place-items: center; align-content: center; min-height: 0; padding: 8px 16px 14px; overflow: hidden; background: #101010; }
+.coach-name-panel { font-size: clamp(48px, 9vw, 112px); gap: 0; }
 .coach-name { display: block; color: #fff; font-family: var(--font); font-weight: 800; font-size: 1em; line-height: 1.12; letter-spacing: -.045em; text-align: center; }
-.coach-label { color: #fff; font-family: var(--font); font-size: .25em; line-height: 1.2; font-weight: 800; letter-spacing: .14em; }
-@media (max-width: 600px) { .coach-name-panel { min-height: 106px; padding: 16px; } }
+.coach-label { color: #fff; font-family: var(--font); font-size: .25em; line-height: 1.4; font-weight: 400; letter-spacing: .015em; color: var(--muted); }
+@media (max-width: 600px) { .coach-name-panel { min-height: 0; padding: 6px 16px 12px; } }
 .coach-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Keep coach 2 centered with breathing room above his hair. */
