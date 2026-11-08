@@ -6,9 +6,7 @@ if (carousel) {
   const coaches = [...carousel.querySelectorAll('.coach-portrait')];
   const namePanel = carousel.querySelector('.coach-name');
   const names = ['Edgar', 'Valeria', 'Joshua', 'Carla'];
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let shownName = '';
-  let nameAnimation;
   const prev = carousel.querySelector('.coach-prev');
   const next = carousel.querySelector('.coach-next');
   const status = carousel.querySelector('.coach-status');
@@ -20,11 +18,7 @@ if (carousel) {
     if (shownName !== name) {
       shownName = name;
       namePanel.textContent = name.toUpperCase();
-      nameAnimation?.cancel();
-      if (!reduced.matches) nameAnimation = namePanel.animate([
-        { opacity: 0, transform: 'translateY(22px)', filter: 'blur(5px)' },
-        { opacity: 1, transform: 'translateY(0)', filter: 'blur(0)' }
-      ], { duration: 550, easing: 'cubic-bezier(.2,.7,.2,1)' });
+
     }
     coaches.forEach((coach, i) => {
       coach.classList.toggle('is-active', i === index);

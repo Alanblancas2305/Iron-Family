@@ -8,10 +8,10 @@ const shakes = [
   { name: 'Capuchino', color: '#d5a274', bg: '#39281e' }
 ];
 const pres = [
-  { name: 'RYSE', flavor: 'Sour Green Apple', file: 'ryse', color: '#c6e54b', bg: '#203327' },
-  { name: 'KAIOKEN', flavor: 'Citrus Dragon', file: 'kaioken', color: '#ffc914', bg: '#45211e' },
-  { name: 'ESSENTIAL', flavor: 'Chamoy Mango', file: 'essential', color: '#ffa54b', bg: '#432c20' },
-  { name: 'PSYCHOTIC', flavor: 'Grape', file: 'psychotic', color: '#c597e9', bg: '#32253e' }
+  { name: 'RYSE', flavor: 'Manzana verde ácida', file: 'ryse', color: '#c6e54b', bg: '#203327' },
+  { name: 'KAIOKEN', flavor: 'Cítricos', file: 'kaioken', color: '#ffc914', bg: '#45211e' },
+  { name: 'ESSENTIAL', flavor: 'Mango con chamoy', file: 'essential', color: '#ffa54b', bg: '#432c20' },
+  { name: 'PSYCHOTIC', flavor: 'Uva', file: 'psychotic', color: '#c597e9', bg: '#32253e' }
 ];
 const $ = s => document.querySelector(s);
 const fuel = $('#fuel'), pre = $('#preentrenos');
@@ -21,14 +21,16 @@ const smooth = n => { n = clamp(n); return n * n * (3 - 2 * n); };
 const num = n => String(n + 1).padStart(2, '0');
 let flavor = -1, product = -1, frame = 0;
 let manualFlavor = 0, manualProduct = 0;
-let flavorOffset = 0;
+let flavorOffset = 0, productOffset = 0;
+let lastPrePosition, lastPreStill;
 let lastShakePosition, lastShakeStill;
 const scenes = $('#fuel-scenes');
 scenes.innerHTML = shakes.map((s, i) => `<div class="fuel-scene" style="--sprite-x:${i * 25}%;--flavor:${s.color}" aria-hidden="true"><span class="fuel-ghost">${s.name}</span><div class="fuel-composition"><div class="shake-layer layer-splash"></div><div class="shake-layer layer-cup"></div><div class="shake-layer layer-ingredients"></div><div class="shake-layer layer-detail"></div></div><span class="fuel-shadow"></span></div>`).join('');
 $('.fuel-selector').innerHTML = shakes.map((s, i) => `<button type="button" data-flavor="${i}" aria-label="Malteada de ${s.name}" aria-pressed="${i === 0}"><span>${num(i)}</span><b>${s.name}</b></button>`).join('');
-$('.pre-track').innerHTML = pres.map((p, i) => `<article class="pre-slide" style="--pre-color:${p.color};--pre-bg:${p.bg}" aria-label="${p.name}, ${p.flavor}"><span class="pre-number" aria-hidden="true">${num(i)}</span><div class="pre-description"><p class="fuel-kicker">TU SIGUIENTE RITUAL</p><h3>${p.name}</h3><p>${p.flavor}</p></div><div class="pre-product"><div class="pre-ring"></div><i class="pre-ice ice-one"></i><i class="pre-ice ice-two"></i><i class="pre-ice ice-three"></i><img src="/assets/fuel/${p.file}.png" alt="Envase de ${p.name}, ${p.flavor}" width="600" height="600" loading="lazy"></div></article>`).join('');
+$('.pre-track').innerHTML = pres.map((p, i) => `<article class="pre-slide" style="--pre-color:${p.color};--pre-bg:${p.bg}" aria-label="${p.name}, ${p.flavor}"><span class="pre-number" aria-hidden="true">${num(i)}</span><div class="pre-description"><h3>${p.name}</h3><p>${p.flavor}</p></div><div class="pre-product"><div class="pre-ring"></div><i class="pre-ice ice-one"></i><i class="pre-ice ice-two"></i><i class="pre-ice ice-three"></i><img src="/assets/fuel/${p.file}.png" alt="Envase de ${p.name}, ${p.flavor}" width="600" height="600" loading="lazy"></div></article>`).join('');
 const sceneNodes = [...document.querySelectorAll('.fuel-scene')];
 const productNodes = [...document.querySelectorAll('.pre-slide')];
+const preTrack = $('.pre-track');
 
 function selectedFlavor(index) {
   if (flavor === index) return;
@@ -65,9 +67,9 @@ function renderShakes(position, still = false) {
     const visible = t >= 0 && t <= 1;
     el.style.visibility = visible ? 'visible' : 'hidden';
     if (!visible) return;
-    const assemble = still ? 1 : smooth(t / .48);
+    const assemble = still || i === 0 ? 1 : smooth(t / .48);
     const leave = still || i === shakes.length - 1 ? 0 : smooth((t - .78) / .22);
-    el.style.opacity = still ? 1 : smooth(t / .12) * (1 - leave);
+    el.style.opacity = still ? 1 : (i === 0 ? 1 : smooth(t / .12)) * (1 - leave);
     el.style.transform = `translateY(${-leave * 100}px)`;
     el.style.setProperty('--cup-y', `${(1 - assemble) * 115}px`);
     el.style.setProperty('--cup-turn', `${(1 - assemble) * -16 - 8}deg`);
@@ -80,10 +82,13 @@ function renderShakes(position, still = false) {
   });
 }
 function renderPres(position, still = false) {
+  if (position === lastPrePosition && still === lastPreStill) return;
+  lastPrePosition = position;
+  lastPreStill = still;
   const x = clamp(position - .45, 0, 3);
   const index = Math.round(x);
   selectedProduct(index);
-  $('.pre-track').style.transform = `translate3d(${-x * 25}%,0,0)`;
+  preTrack.style.transform = `translate3d(${-x * 25}%,0,0)`;
   productNodes.forEach((el, i) => {
     const distance = still ? 0 : clamp(Math.abs(x - i));
     el.style.setProperty('--product-y', `${distance * 90}px`);
@@ -99,7 +104,7 @@ function render() {
     renderPres(manualProduct + .45, true);
   } else {
     renderShakes(clamp(progress(fuel, 5) + flavorOffset, 0, shakes.length - .001));
-    renderPres(progress(pre, 4));
+    renderPres(clamp(progress(pre, 4) + productOffset, .45, pres.length - .55));
   }
 }
 function schedule() { if (!frame) frame = requestAnimationFrame(render); }
@@ -119,16 +124,12 @@ function jump(el, index, count, settle) {
     }
     return;
   }
-  if (motion.matches) {
-    if (el === fuel) manualFlavor = index; else manualProduct = index;
-    schedule();
-    return;
-  }
-  const pin = el.firstElementChild, top = parseFloat(getComputedStyle(pin).top) || 0;
-  const y = scrollY + el.getBoundingClientRect().top - top + (index + settle) / (count - .001) * (el.offsetHeight - pin.offsetHeight);
-  // Direct navigation avoids flying through intervening flavors on a selector click.
-  window.scrollTo({ top: y, behavior: 'instant' });
-  schedule();
+  if (index === product) return;
+  manualProduct = index;
+  const position = index + settle;
+  productOffset = position - progress(pre, pres.length);
+  // Product controls update only this carousel, without moving the document.
+  renderPres(position, motion.matches);
 }
 $('.fuel-selector').addEventListener('click', e => {
   const b = e.target.closest('[data-flavor]');
