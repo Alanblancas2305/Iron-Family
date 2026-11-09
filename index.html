@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="/src/style.css">
 </head>
 
-<body>
+<body class="public-site">
   <a href="#contenido" class="skip">Saltar al contenido</a>
 
   <header class="site-header">
@@ -482,7 +482,7 @@
         </p>
       </div>
 
-      <form id="comment-form" class="comment-box reveal">
+      <form id="comment-form" class="comment-box reveal" novalidate>
         <label for="comment-name">
           Nombre <span>(opcional)</span>
         </label>
@@ -507,10 +507,7 @@
           placeholder="¿Qué te gustaría compartir?"
         ></textarea>
 
-        <div class="comment-meta">
-          <span>Mínimo 10 caracteres</span>
-          <span id="comment-count">0 / 2000</span>
-        </div>
+
 
         <p id="comment-error" class="form-error" role="alert"></p>
 

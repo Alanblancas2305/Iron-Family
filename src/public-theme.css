@@ -1,0 +1,17 @@
+/* Public accents; the reception panel retains its existing theme. */
+.public-site { --red: #FFB800; --accent: #FFB800; touch-action: manipulation; }
+.public-site .button:not(.secondary) { color: #151515; }
+.public-site .button:not(.secondary):hover { background: #e5a600; }
+.public-site .button.secondary { border-color: var(--accent); color: var(--accent); }
+.public-site .header-actions > .button { background: #dc0b19; color: #fff; }
+.public-site .header-actions > .button:hover { background: #b80915; }
+.public-site .desktop-nav a, .public-site .mobile-nav a { color: var(--accent); }
+.public-site .site-header .menu-toggle { border-color: var(--accent); }
+.public-site .site-header .menu-toggle span { background: var(--accent); }
+.public-site .membership-box, .public-site .comment-box { border-color: var(--accent); background: linear-gradient(130deg, #FFB8000d, #171717 70%); }
+.public-site .comment-box textarea { border-color: var(--accent); }
+.public-site .comment-box textarea:focus { outline: 2px solid var(--accent); outline-offset: 5px; }
+.public-site .comment-box .button { margin-top: 16px; }
+.public-site .plans-tabs button[aria-selected="true"],
+.public-site .plans-tabs button[aria-selected="true"]:hover { background: var(--accent); color: #151515; }
+.public-site .icon-button:hover, .public-site .coach-arrow { color: #151515; }
