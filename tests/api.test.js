@@ -10,7 +10,7 @@ test('API: aislamiento, sesión, validación, CRUD y consulta mínima',async()=>
   global.fetch=async(url,opt)=>{seenHeaders=opt.headers;const u=new URL(url),b=opt.body?JSON.parse(opt.body):{};let value;
     if(u.pathname.endsWith('iron_take_budget'))value=true;
     else if(u.pathname.endsWith('iron_lookup_name'))value=stored.filter(x=>x.name===b.p_name).map(({id,name,area,start,months})=>({id,name,area,start,months}));
-    else if(opt.method==='POST'){const row={id:next++,...b};stored.push(row);value=[row];}
+    else if(u.pathname.endsWith('iron_save_profile')){const row={id:next++,...b.p_member};stored.push(row);value=[row];}
     else if(opt.method==='PATCH'){const id=Number(u.searchParams.get('id').slice(3));const row=stored.find(x=>x.id===id);Object.assign(row,b);value=[row];}
     else if(opt.method==='DELETE'){const id=Number(u.searchParams.get('id').slice(3));value=stored.filter(x=>x.id===id);stored=stored.filter(x=>x.id!==id);}
     else {value=stored.filter(x=>(!u.searchParams.has('id')||x.id===Number(u.searchParams.get('id').slice(3)))&&(!u.searchParams.has('access_code')||x.access_code===u.searchParams.get('access_code').slice(3)));if(u.searchParams.get('select')!=='*')value=value.map(({id,name,area,start,months})=>({id,name,area,start,months}));}
@@ -44,7 +44,7 @@ test('API: aislamiento, sesión, validación, CRUD y consulta mínima',async()=>
     assert.equal((await call('comments',{method:'POST',body:{name:'',message:'Corto'}})).code,400);
     assert.equal((await call('lookup',{method:'POST',body:{name:'A'}})).code,400);
     stored.push({...stored[0],id:1002});
-    assert.equal((await call('lookup',{method:'POST',body:{name:member.name}})).code,409);
+    assert.equal((await call('lookup',{method:'POST',body:{name:member.name}})).body.id,1002);
     stored.pop();
     assert.equal((await call('members',{method:'PATCH',body:{...member,id:1001,months:3},headers})).body.months,3);
     assert.equal((await call('members',{method:'DELETE',body:{id:1001},headers})).code,200);assert.equal(stored.length,0);

@@ -20,7 +20,7 @@ test('edad opcional, importe predeterminado y fechas españolas/Excel',()=>{
 test('preview distinguishes duplicates, errors, modality and totals',()=>{
   const matrix=[['Nombre','Inicio','Vencimiento','Pago','Edad','Modalidad'],['Citzi','11/10/2026','11/11/2026','','',''],[' CÍTZI ','11/10/2026','11/11/2026',600,'',''],['Nancy','11/10/2026','11/11/2026',650,25,'Cross'],['Omar','31/02/2026','31/03/2026',600,'','']];
   const result=previewImport(matrix,[{name:'Nancy'}],'gym',false,'2026-10-21');
-  assert.deepEqual(result.map(r=>r.status),['ready','duplicate','duplicate','error']);
+  assert.deepEqual(result.map(r=>r.status),['duplicate','ready','ready','error']);
   assert.equal(result[0].fields.amount,600);assert.equal(result[0].fields.age,null);
   assert.equal(result[2].fields.area,'cf');assert.equal(result[2].fields.amount,650);
 });

@@ -173,6 +173,9 @@ async function db(path, { method = 'GET', body } = {}) {
   );
 
   if (!response.ok) {
+    if (response.status === 409 && method === 'PATCH') {
+      throw Object.assign(new Error('Ya existe un miembro con ese nombre.'), {status:409});
+    }
     const error = new Error(
       'No se pudo acceder a los registros. Verifica la conexión ' +
       'y que se haya ejecutado database.sql.'
@@ -375,15 +378,8 @@ export default async function handler(req, res) {
         });
       }
 
-      if (result.length > 1) {
-        return res.status(409).json({
-          error:
-            'Hay más de un registro con ese nombre. Acércate a ' +
-            'recepción para identificar tu membresía.'
-        });
-      }
-
-      return res.status(200).json(result[0]);
+      const latest = result.reduce((a,b) => Number(a.id) > Number(b.id) ? a : b);
+      return res.status(200).json(latest);
     }
 
     // ENVIAR COMENTARIO DESDE LA PÁGINA PÚBLICA
@@ -629,14 +625,14 @@ export default async function handler(req, res) {
       }
     } else {
       // CREAR MIEMBRO
-      result = await db('iron_members', {
+      result = await db('rpc/iron_save_profile', {
         method: 'POST',
-        body: {
+        body: { p_member: {
           ...member,
           access_code: randomBytes(10)
             .toString('hex')
             .toUpperCase()
-        }
+        } }
       });
     }
 

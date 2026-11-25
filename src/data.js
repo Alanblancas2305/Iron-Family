@@ -51,6 +51,17 @@ function read() {
       }
       write(rows); localStorage.setItem(DEMO_VERSION,'1');
     }
+    const latest = new Map();
+    for (const m of [...rows].sort((a,b)=>a.id-b.id)) latest.set(normalizeName(m.name),m);
+    if (latest.size < rows.length) {
+      const ids = new Map(rows.map(m=>[m.id, latest.get(normalizeName(m.name)).id]));
+      const payments = JSON.parse(localStorage.getItem('iron_payments_demo') || '[]');
+      for (const p of payments) p.member_id = ids.get(p.member_id) ?? p.member_id;
+      localStorage.setItem('iron_payments_demo', JSON.stringify(payments));
+      const kept = rows.filter(m=>ids.get(m.id)===m.id);
+      write(kept);
+      return kept;
+    }
     return rows;
   } catch { throw new Error('No pudimos leer los datos de prueba. Habilita el almacenamiento del navegador o restáuralos desde Configuración.'); }
 }
@@ -60,10 +71,17 @@ export async function saveMember(data) {
   const fields = validateMember(data);
   if ((await getConfig()).mode === 'cloud') return api('members', { ...fields, ...(data.id ? { id: Number(data.id) } : {}) }, data.id ? 'PATCH' : 'POST');
   const rows = read();
+  const prior = rows.find(m=>normalizeName(m.name)===normalizeName(fields.name));
   if (data.id) {
+    if(prior && prior.id!==Number(data.id)) throw new Error("Ya existe un miembro con ese nombre.");
     const index = rows.findIndex(r => r.id === Number(data.id));
     if (index < 0) throw new Error('Este miembro ya no existe. Actualiza la lista.');
     rows[index] = { ...rows[index], ...fields, paid_until: rows[index].start===fields.start && rows[index].months===fields.months ? rows[index].paid_until : null }; write(rows); return rows[index];
+  }
+  if(prior) {
+    Object.assign(prior,fields,{paid_until:null});
+    write(rows);
+    return prior;
   }
   const member = { ...fields, id: Math.max(1000, ...rows.map(r => r.id)) + 1, access_code: crypto.randomUUID().replaceAll('-', '').slice(0, 12).toUpperCase() };
   rows.push(member); write(rows); return member;
@@ -75,7 +93,6 @@ export async function lookup(name) {
   if ((await getConfig()).mode === 'cloud') return api('lookup', { name });
   const matches = read().filter(m => normalizeName(m.name) === normalizeName(name));
   if (!matches.length) throw new Error('No encontramos tu membresía. Escribe tu nombre completo como lo registraste en recepción.');
-  if (matches.length > 1) throw new Error('Hay más de un registro con ese nombre. Acércate a recepción para identificar tu membresía.');
   const {id, name: fullName, area, start, months, paid_until} = matches[0];
   return {id, name: fullName, area, start, months, paid_until};
 }
@@ -127,13 +144,13 @@ export async function recordPayment(data) {
 export async function importMembers(input) {
   const valid=validateImportBatch(input);
   if((await getConfig()).mode==='cloud') return api('import',{rows:valid});
-  const rows=read(), payments=await listPayments(), seen=new Set(rows.map(m=>normalizeName(m.name)));
-  let next=Math.max(1000,...rows.map(m=>Number(m.id))), imported=0, skipped=0;
-  for(const fields of valid) {
+  const rows=read(), payments=await listPayments(), latest=new Map(valid.map(m=>[normalizeName(m.name),m]));
+  let next=Math.max(1000,...rows.map(m=>Number(m.id))), imported=0, updated=0, skipped=valid.length-latest.size;
+  for(const fields of latest.values()) {
     const key=normalizeName(fields.name);
-    if(seen.has(key)){skipped++;continue;}
-    seen.add(key);
     const {amount,method,...member}=fields;
+    const prior=rows.find(m=>normalizeName(m.name)===key);
+    if(prior){Object.assign(prior,member);updated++;continue;}
     member.id=++next;member.access_code=crypto.randomUUID();rows.push(member);
     payments.push({id:crypto.randomUUID(),member_id:member.id,member_name:member.name,amount,method,start:member.start,months:member.months,created_at:member.start+'T18:00:00.000Z'});
     imported++;
@@ -142,5 +159,5 @@ export async function importMembers(input) {
   const oldMembers=localStorage.getItem(KEY), oldPayments=localStorage.getItem('iron_payments_demo');
   try {write(rows);localStorage.setItem('iron_payments_demo',JSON.stringify(payments));}
   catch(e){if(oldMembers===null)localStorage.removeItem(KEY);else localStorage.setItem(KEY,oldMembers);if(oldPayments===null)localStorage.removeItem('iron_payments_demo');else localStorage.setItem('iron_payments_demo',oldPayments);throw e;}
-  return {imported,skipped};
+  return {imported,updated,skipped};
 }

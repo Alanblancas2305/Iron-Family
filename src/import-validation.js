@@ -36,6 +36,7 @@ export function previewImport(matrix, existing, defaultArea = 'gym', date1904 = 
   const rows = matrix.slice(1).map((cells,i)=>({cells,line:i+2})).filter(({cells})=>cells.some(v=>String(v??'').trim()));
   if (!rows.length || rows.length > IMPORT_LIMIT) throw new Error(`El archivo debe contener entre 1 y ${IMPORT_LIMIT} filas de datos.`);
   const seen = new Set(existing.map(m=>normalizeName(m.name)));
+  const latest = new Map();
   return rows.map(({cells,line})=>{
     const raw = Object.fromEntries(Object.entries(cols).map(([key,i])=>[key,i<0?'':cells[i] ?? '']));
     try {
@@ -44,8 +45,12 @@ export function previewImport(matrix, existing, defaultArea = 'gym', date1904 = 
       raw.area=area ? ({gym:'gym','iron gym':'gym',cross:'cf',crossfit:'cf',cf:'cf','iron cross':'cf'}[area] || area) : defaultArea;
       if(raw.method) raw.method=({efectivo:'Efectivo',tarjeta:'Tarjeta',transferencia:'Transferencia'}[normalizeName(raw.method)] || raw.method);
       const fields=validateImportRow(raw,on), key=normalizeName(fields.name);
-      if (seen.has(key)) return {line,fields,status:'duplicate',message:'Nombre ya registrado o repetido; se omitirá.'};
-      seen.add(key);return {line,fields,status:'ready',message:'Listo para importar'};
+      const prior = latest.get(key);
+      if (prior) Object.assign(prior,{status:'duplicate',message:'Se usará la última fila de este nombre.'});
+      const entry = {line,fields,status:'ready',existing:seen.has(key),
+        message:seen.has(key)?'Se actualizará el perfil.':'Listo para importar'};
+      latest.set(key,entry);
+      return entry;
     } catch(e) {return {line,fields:raw,status:'error',message:e.message};}
   });
 }
